@@ -1,0 +1,42 @@
+services:
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - DB_HOST=mysql
+      - DB_NAME=bilensven
+      - DB_USER=bilensven_user
+      - DB_PASSWORD=secure_password_123
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - bilensven-network
+
+  mysql:
+    image: mysql:8.0
+    environment:
+      - MYSQL_DATABASE=bilensven
+      - MYSQL_USER=bilensven_user
+      - MYSQL_PASSWORD=secure_password_123
+      - MYSQL_ROOT_PASSWORD=root_password_123
+    volumes:
+      - mysql-data:/var/lib/mysql
+    expose:
+      - "3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - bilensven-network
+      -
+volumes:
+  mysql-data:
+
+networks:
+  bilensven-network:
+    driver: bridge
