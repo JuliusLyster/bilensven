@@ -32,8 +32,6 @@ public class DataInitializer {
     }
 
     private void initializeEmployees() {
-        // TODO: Få rigtige medarbejder data fra Michael (kunden)
-        // Erstat med faktiske navne, positioner og kontaktinfo
 
         Employee employee1 = new Employee();
         employee1.setName("Michael Hansen");
