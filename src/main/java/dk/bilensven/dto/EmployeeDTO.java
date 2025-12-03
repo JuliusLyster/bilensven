@@ -1,27 +1,18 @@
-package dk.bilensven.model;
+package dk.bilensven.dto;
 
-import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
-@Entity
-@Table(name = "employees")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@EntityListeners(AuditingEntityListener.class)
-public class Employee extends BaseEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class EmployeeDTO {
     private Long id;
 
     @NotBlank(message = "Navn er påkrævet")
@@ -29,11 +20,10 @@ public class Employee extends BaseEntity {
     private String name;
 
     @NotBlank(message = "Stilling er påkrævet")
-    @Size(max = 100, message = "Stilling skal være mindre end 100 tegn")
+    @Size(max = 100, message = "Positionen skal være mindre end 100 tegn")
     private String position;
 
     @Email(message = "Ugyldigt e-mailformat")
-    @Column(unique = true)
     private String email;
 
     @Size(max = 20, message = "Telefonnummeret skal være på under 20 tegn")
@@ -41,13 +31,8 @@ public class Employee extends BaseEntity {
 
     private String imageUrl;
 
-    @Column(nullable = false)
-    private Boolean active = true;
+    private Boolean active;
 
-    @CreatedDate
-    @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
-
-    @LastModifiedDate
     private LocalDateTime updatedAt;
 }
