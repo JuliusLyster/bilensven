@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bilen's Ven - Bilværksted i Ishøj</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<!-- Header -->
+<header class="header">
+    <div class="container">
+        <div class="logo">
+            <h1>Bilen's Ven</h1>
+        </div>
+        <nav class="nav">
+            <a href="#services">Services</a>
+            <a href="#employees">Medarbejdere</a>
+            <a href="#contact">Kontakt</a>
+        </nav>
+    </div>
+</header>
+
+<!-- Hero Section -->
+<section class="hero">
+    <div class="container">
+        <h2>Dit lokale værksted i Ishøj</h2>
+        <p>Professionel bilservice siden 2024 </p>
+        <a href="#contact" class="btn btn-primary">Kontakt os</a>
+    </div>
+</section>
+
+<!-- Services Section -->
+<section id="services" class="section">
+    <div class="container">
+        <h2 class="section-title">Vores Services</h2>
+
+        <!-- Loading State -->
+        <div id="services-loading" class="loading">
+            <div class="spinner"></div>
+            <p>Henter services...</p>
+        </div>
+
+        <!-- Error State -->
+        <div id="services-error" class="error hidden">
+            <p>Kunne ikke hente services. Prøv igen senere.</p>
+        </div>
+
+        <!-- Services Grid -->
+        <div id="services-grid" class="grid hidden"></div>
+    </div>
+</section>
+
+<!-- Employees Section -->
+<section id="employees" class="section section-gray">
+    <div class="container">
+        <h2 class="section-title">Vores Team</h2>
+
+        <div id="employees-loading" class="loading">
+            <div class="spinner"></div>
+            <p>Henter medarbejdere...</p>
+        </div>
+
+        <div id="employees-error" class="error hidden">
+            <p>Kunne ikke hente medarbejdere.</p>
+        </div>
+
+        <div id="employees-grid" class="grid hidden"></div>
+    </div>
+</section>
+
+<!-- Contact Section -->
+<section id="contact" class="section">
+    <div class="container">
+        <h2 class="section-title">Kontakt Os</h2>
+        <!-- Will be added in US-3.2 -->
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+    <div class="container">
+        <p>&copy; 2024 Bilen's Ven. Alle rettigheder forbeholdes.</p>
+    </div>
+</footer>
+
+<script src="js/api.js"></script>
+<script src="js/services.js"></script>
+<script src="js/employees.js"></script>
+</body>
+</html>
