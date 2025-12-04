@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medarbejdere - Bilen's Ven</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<!-- Navigation -->
+<nav class="navbar">
+    <div class="container">
+        <div class="nav-brand">
+            <h1>Bilen's Ven</h1>
+        </div>
+        <div class="nav-links">
+            <a href="index.html">Hjem</a>
+            <a href="services.html">Services</a>
+            <a href="medarbejdere.html" class="active">Medarbejdere</a>
+            <a href="index.html#kontakt">Kontakt</a>
+        </div>
+    </div>
+</nav>
+
+<!-- Team Section -->
+<section class="section">
+    <div class="container">
+        <h2 class="section-title">Vores Team</h2>
+        <p class="section-subtitle">Mød vores dedikerede og erfarne medarbejdere</p>
+
+        <!-- Loading State -->
+        <div id="employees-loading" class="loading">
+            <div class="spinner"></div>
+            <p>Henter medarbejdere...</p>
+        </div>
+
+        <!-- Error State -->
+        <div id="employees-error" class="error-message hidden"></div>
+
+        <!-- Employees Grid -->
+        <div id="employees-grid" class="team-grid hidden"></div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+    <div class="container">
+        <p>&copy; 2024 Bilen's Ven. Alle rettigheder forbeholdes.</p>
+    </div>
+</footer>
+
+<script src="js/api.js"></script>
+<script src="js/employees.js"></script>
+</body>
+</html>

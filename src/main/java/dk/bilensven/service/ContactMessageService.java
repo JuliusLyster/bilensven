@@ -4,6 +4,7 @@ import dk.bilensven.dto.ContactMessageDTO;
 import dk.bilensven.exception.ResourceNotFoundException;
 import dk.bilensven.model.ContactMessage;
 import dk.bilensven.repository.ContactMessageRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -49,7 +50,7 @@ public class ContactMessageService {
         log.info("Fetching unread contact messages");
 
         return contactMessageRepository.findAll().stream()
-                .filter(msg -> !msg.getRead())
+                .filter(msg -> !msg.isRead())  // ✅ Changed from getRead() to isRead()
                 .sorted(Comparator.comparing(ContactMessage::getCreatedAt).reversed())
                 .map(this::toDTO)
                 .collect(Collectors.toList());
@@ -72,7 +73,7 @@ public class ContactMessageService {
         dto.setEmail(message.getEmail());
         dto.setPhone(message.getPhone());
         dto.setMessage(message.getMessage());
-        dto.setRead(message.getRead());
+        dto.setRead(message.isRead());  // ✅ Changed from getRead() to isRead()
         dto.setCreatedAt(message.getCreatedAt());
         return dto;
     }
@@ -84,5 +85,15 @@ public class ContactMessageService {
         message.setPhone(dto.getPhone());
         message.setMessage(dto.getMessage());
         return message;
+    }
+    @Transactional
+    public void deleteMessage(Long id) {
+        log.info("Deleting contact message {}", id);
+
+        ContactMessage message = contactMessageRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Message not found with id: " + id));
+
+        contactMessageRepository.delete(message);
+        log.info("Message {} deleted successfully", id);
     }
 }

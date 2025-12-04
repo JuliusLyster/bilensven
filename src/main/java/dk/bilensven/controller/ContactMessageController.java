@@ -66,4 +66,10 @@ public class ContactMessageController {
         }
         return request.getRemoteAddr();
     }
+    @DeleteMapping("/messages/{id}")
+    public ResponseEntity<Void> deleteMessage(@PathVariable Long id) {
+        log.info("DELETE /api/contact/messages/{}", id);
+        contactMessageService.deleteMessage(id);
+        return ResponseEntity.noContent().build();
+    }
 }

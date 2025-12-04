@@ -1,103 +1,117 @@
-// Admin Panel JavaScript
-const API_BASE = 'http://localhost:8080/api';
+// ============================================
+// API CONFIGURATION
+// ============================================
+
+const API_BASE_URL = 'http://localhost:8080/api';
 
 // ============================================
-// INITIALIZATION
+// DASHBOARD
 // ============================================
-document.addEventListener('DOMContentLoaded', function() {
-    loadServices();
-    loadEmployees();
-    setupEventListeners();
-});
 
-function setupEventListeners() {
-    document.getElementById('service-form').addEventListener('submit', handleServiceSubmit);
-    document.getElementById('employee-form').addEventListener('submit', handleEmployeeSubmit);
-}
-
-// ============================================
-// SERVICES
-// ============================================
-async function loadServices() {
+async function loadDashboard() {
     try {
-        const response = await fetch(`${API_BASE}/services`);
-        const services = await response.json();
+        const [services, employees] = await Promise.all([
+            fetch(`${API_BASE_URL}/services`).then(r => r.json()),
+            fetch(`${API_BASE_URL}/employees`).then(r => r.json())
+        ]);
 
-        document.getElementById('services-loading').style.display = 'none';
-        document.getElementById('services-table').style.display = 'block';
         document.getElementById('services-count').textContent = services.length;
+        document.getElementById('employees-count').textContent = employees.length;
 
-        const tbody = document.getElementById('services-tbody');
-        tbody.innerHTML = services.map(service => `
-            <tr>
-                <td>${service.id}</td>
-                <td><strong>${service.name}</strong></td>
-                <td>${service.description || '-'}</td>
-                <td>${service.price.toFixed(2)} DKK</td>
-                <td>
-                    <span class="badge ${service.active ? 'badge-active' : 'badge-inactive'}">
-                        ${service.active ? 'Aktiv' : 'Inaktiv'}
-                    </span>
-                </td>
-                <td>
-                    <button class="btn btn-primary btn-small" onclick='editService(${JSON.stringify(service)})'>
-                        Rediger
-                    </button>
-                    <button class="btn btn-danger btn-small" onclick="deleteService(${service.id}, '${service.name}')">
-                        Slet
-                    </button>
-                </td>
-            </tr>
-        `).join('');
     } catch (error) {
-        console.error('Error loading services:', error);
-        showAlert('Kunne ikke indlæse services', 'error');
+        console.error('Error loading dashboard:', error);
     }
 }
 
-function openServiceModal(service = null) {
+// ============================================
+// SERVICES MANAGEMENT
+// ============================================
+
+let servicesData = [];
+
+async function loadServices() {
+    try {
+        const loadingEl = document.getElementById('services-loading');
+        const tableEl = document.getElementById('services-table');
+
+        if (loadingEl) loadingEl.style.display = 'block';
+        if (tableEl) tableEl.style.display = 'none';
+
+        const response = await fetch(`${API_BASE_URL}/services`);
+        servicesData = await response.json();
+
+        if (loadingEl) loadingEl.style.display = 'none';
+        if (tableEl) tableEl.style.display = 'table';
+
+        renderServicesTable();
+    } catch (error) {
+        console.error('Error loading services:', error);
+        const loadingEl = document.getElementById('services-loading');
+        if (loadingEl) loadingEl.style.display = 'none';
+        showAlert('Kunne ikke hente services', 'error');
+    }
+}
+
+function renderServicesTable() {
+    const tbody = document.querySelector('#services-table tbody');
+    if (!tbody) return;
+
+    tbody.innerHTML = servicesData.map(service => `
+        <tr>
+            <td>${service.id}</td>
+            <td>${escapeHtml(service.name)}</td>
+            <td>${escapeHtml(service.description)}</td>
+            <td>${service.price.toFixed(2)} DKK</td>
+            <td><span class="badge ${service.active ? 'badge-success' : 'badge-danger'}">${service.active ? 'Aktiv' : 'Inaktiv'}</span></td>
+            <td>
+                <button class="btn-sm btn-primary" onclick="editService(${service.id})">Rediger</button>
+                <button class="btn-sm btn-danger" onclick="deleteService(${service.id})">Slet</button>
+            </td>
+        </tr>
+    `).join('');
+}
+
+function openServiceModal(serviceId = null) {
     const modal = document.getElementById('service-modal');
-    const title = document.getElementById('service-modal-title');
     const form = document.getElementById('service-form');
+    const title = document.getElementById('service-modal-title');
 
-    form.reset();
-
-    if (service) {
+    if (serviceId) {
+        const service = servicesData.find(s => s.id === serviceId);
         title.textContent = 'Rediger Service';
         document.getElementById('service-id').value = service.id;
         document.getElementById('service-name').value = service.name;
-        document.getElementById('service-description').value = service.description || '';
+        document.getElementById('service-description').value = service.description;
         document.getElementById('service-price').value = service.price;
-        document.getElementById('service-active').value = service.active.toString();
+        document.getElementById('service-image-url').value = service.imageUrl || '';
+        document.getElementById('service-active').checked = service.active;
     } else {
         title.textContent = 'Ny Service';
-        document.getElementById('service-active').value = 'true';
+        form.reset();
+        document.getElementById('service-id').value = '';
     }
 
-    modal.classList.add('active');
+    modal.style.display = 'block';
 }
 
 function closeServiceModal() {
-    document.getElementById('service-modal').classList.remove('active');
+    document.getElementById('service-modal').style.display = 'none';
 }
 
-function editService(service) {
-    openServiceModal(service);
-}
-
-async function handleServiceSubmit(e) {
-    e.preventDefault();
+async function saveService(event) {
+    event.preventDefault();
 
     const id = document.getElementById('service-id').value;
     const data = {
         name: document.getElementById('service-name').value,
         description: document.getElementById('service-description').value,
         price: parseFloat(document.getElementById('service-price').value),
-        active: document.getElementById('service-active').value === 'true'
+        imageUrl: document.getElementById('service-image-url').value,
+        active: document.getElementById('service-active').checked
     };
 
     try {
-        const url = id ? `${API_BASE}/services/${id}` : `${API_BASE}/services`;
+        const url = id ? `${API_BASE_URL}/services/${id}` : `${API_BASE_URL}/services`;
         const method = id ? 'PUT' : 'POST';
 
         const response = await fetch(url, {
@@ -108,27 +122,33 @@ async function handleServiceSubmit(e) {
 
         if (!response.ok) throw new Error('Failed to save service');
 
-        showAlert(id ? 'Service opdateret!' : 'Service oprettet!', 'success');
+        showAlert(id ? 'Service opdateret' : 'Service oprettet', 'success');
         closeServiceModal();
-        loadServices();
+        await loadServices();
+        await loadDashboard();
     } catch (error) {
         console.error('Error saving service:', error);
         showAlert('Kunne ikke gemme service', 'error');
     }
 }
 
-async function deleteService(id, name) {
-    if (!confirm(`Er du sikker på at du vil slette "${name}"?`)) return;
+function editService(id) {
+    openServiceModal(id);
+}
+
+async function deleteService(id) {
+    if (!confirm('Er du sikker på at du vil slette denne service?')) return;
 
     try {
-        const response = await fetch(`${API_BASE}/services/${id}`, {
+        const response = await fetch(`${API_BASE_URL}/services/${id}`, {
             method: 'DELETE'
         });
 
         if (!response.ok) throw new Error('Failed to delete service');
 
-        showAlert('Service slettet!', 'success');
-        loadServices();
+        showAlert('Service slettet', 'success');
+        await loadServices();
+        await loadDashboard();
     } catch (error) {
         console.error('Error deleting service:', error);
         showAlert('Kunne ikke slette service', 'error');
@@ -136,80 +156,84 @@ async function deleteService(id, name) {
 }
 
 // ============================================
-// EMPLOYEES
+// EMPLOYEES MANAGEMENT
 // ============================================
+
+let employeesData = [];
+
 async function loadEmployees() {
     try {
-        const response = await fetch(`${API_BASE}/employees`);
-        const employees = await response.json();
+        const loadingEl = document.getElementById('employees-loading');
+        const tableEl = document.getElementById('employees-table');
 
-        document.getElementById('employees-loading').style.display = 'none';
-        document.getElementById('employees-table').style.display = 'block';
-        document.getElementById('employees-count').textContent = employees.length;
+        if (loadingEl) loadingEl.style.display = 'block';
+        if (tableEl) tableEl.style.display = 'none';
 
-        const tbody = document.getElementById('employees-tbody');
-        tbody.innerHTML = employees.map(employee => `
-            <tr>
-                <td>${employee.id}</td>
-                <td><strong>${employee.name}</strong></td>
-                <td>${employee.position}</td>
-                <td>${employee.email || '-'}</td>
-                <td>${employee.phone || '-'}</td>
-                <td>
-                    <span class="badge ${employee.active ? 'badge-active' : 'badge-inactive'}">
-                        ${employee.active ? 'Aktiv' : 'Inaktiv'}
-                    </span>
-                </td>
-                <td>
-                    <button class="btn btn-primary btn-small" onclick='editEmployee(${JSON.stringify(employee)})'>
-                        Rediger
-                    </button>
-                    <button class="btn btn-danger btn-small" onclick="deleteEmployee(${employee.id}, '${employee.name}')">
-                        Slet
-                    </button>
-                </td>
-            </tr>
-        `).join('');
+        const response = await fetch(`${API_BASE_URL}/employees`);
+        employeesData = await response.json();
+
+        if (loadingEl) loadingEl.style.display = 'none';
+        if (tableEl) tableEl.style.display = 'table';
+
+        renderEmployeesTable();
     } catch (error) {
         console.error('Error loading employees:', error);
-        showAlert('Kunne ikke indlæse medarbejdere', 'error');
+        const loadingEl = document.getElementById('employees-loading');
+        if (loadingEl) loadingEl.style.display = 'none';
+        showAlert('Kunne ikke hente medarbejdere', 'error');
     }
 }
 
-function openEmployeeModal(employee = null) {
+function renderEmployeesTable() {
+    const tbody = document.querySelector('#employees-table tbody');
+    if (!tbody) return;
+
+    tbody.innerHTML = employeesData.map(employee => `
+        <tr>
+            <td>${employee.id}</td>
+            <td>${escapeHtml(employee.name)}</td>
+            <td>${escapeHtml(employee.position)}</td>
+            <td>${escapeHtml(employee.email || '-')}</td>
+            <td>${escapeHtml(employee.phone || '-')}</td>
+            <td><span class="badge ${employee.active ? 'badge-success' : 'badge-danger'}">${employee.active ? 'Aktiv' : 'Inaktiv'}</span></td>
+            <td>
+                <button class="btn-sm btn-primary" onclick="editEmployee(${employee.id})">Rediger</button>
+                <button class="btn-sm btn-danger" onclick="deleteEmployee(${employee.id})">Slet</button>
+            </td>
+        </tr>
+    `).join('');
+}
+
+function openEmployeeModal(employeeId = null) {
     const modal = document.getElementById('employee-modal');
-    const title = document.getElementById('employee-modal-title');
     const form = document.getElementById('employee-form');
+    const title = document.getElementById('employee-modal-title');
 
-    form.reset();
-
-    if (employee) {
+    if (employeeId) {
+        const employee = employeesData.find(e => e.id === employeeId);
         title.textContent = 'Rediger Medarbejder';
         document.getElementById('employee-id').value = employee.id;
         document.getElementById('employee-name').value = employee.name;
         document.getElementById('employee-position').value = employee.position;
         document.getElementById('employee-email').value = employee.email || '';
         document.getElementById('employee-phone').value = employee.phone || '';
-        document.getElementById('employee-imageUrl').value = employee.imageUrl || '';
-        document.getElementById('employee-active').value = employee.active.toString();
+        document.getElementById('employee-image-url').value = employee.imageUrl || '';
+        document.getElementById('employee-active').checked = employee.active;
     } else {
         title.textContent = 'Ny Medarbejder';
-        document.getElementById('employee-active').value = 'true';
+        form.reset();
+        document.getElementById('employee-id').value = '';
     }
 
-    modal.classList.add('active');
+    modal.style.display = 'block';
 }
 
 function closeEmployeeModal() {
-    document.getElementById('employee-modal').classList.remove('active');
+    document.getElementById('employee-modal').style.display = 'none';
 }
 
-function editEmployee(employee) {
-    openEmployeeModal(employee);
-}
-
-async function handleEmployeeSubmit(e) {
-    e.preventDefault();
+async function saveEmployee(event) {
+    event.preventDefault();
 
     const id = document.getElementById('employee-id').value;
     const data = {
@@ -217,12 +241,12 @@ async function handleEmployeeSubmit(e) {
         position: document.getElementById('employee-position').value,
         email: document.getElementById('employee-email').value || null,
         phone: document.getElementById('employee-phone').value || null,
-        imageUrl: document.getElementById('employee-imageUrl').value || null,
-        active: document.getElementById('employee-active').value === 'true'
+        imageUrl: document.getElementById('employee-image-url').value || null,
+        active: document.getElementById('employee-active').checked
     };
 
     try {
-        const url = id ? `${API_BASE}/employees/${id}` : `${API_BASE}/employees`;
+        const url = id ? `${API_BASE_URL}/employees/${id}` : `${API_BASE_URL}/employees`;
         const method = id ? 'PUT' : 'POST';
 
         const response = await fetch(url, {
@@ -233,27 +257,33 @@ async function handleEmployeeSubmit(e) {
 
         if (!response.ok) throw new Error('Failed to save employee');
 
-        showAlert(id ? 'Medarbejder opdateret!' : 'Medarbejder oprettet!', 'success');
+        showAlert(id ? 'Medarbejder opdateret' : 'Medarbejder oprettet', 'success');
         closeEmployeeModal();
-        loadEmployees();
+        await loadEmployees();
+        await loadDashboard();
     } catch (error) {
         console.error('Error saving employee:', error);
         showAlert('Kunne ikke gemme medarbejder', 'error');
     }
 }
 
-async function deleteEmployee(id, name) {
-    if (!confirm(`Er du sikker på at du vil slette "${name}"?`)) return;
+function editEmployee(id) {
+    openEmployeeModal(id);
+}
+
+async function deleteEmployee(id) {
+    if (!confirm('Er du sikker på at du vil slette denne medarbejder?')) return;
 
     try {
-        const response = await fetch(`${API_BASE}/employees/${id}`, {
+        const response = await fetch(`${API_BASE_URL}/employees/${id}`, {
             method: 'DELETE'
         });
 
         if (!response.ok) throw new Error('Failed to delete employee');
 
-        showAlert('Medarbejder slettet!', 'success');
-        loadEmployees();
+        showAlert('Medarbejder slettet', 'success');
+        await loadEmployees();
+        await loadDashboard();
     } catch (error) {
         console.error('Error deleting employee:', error);
         showAlert('Kunne ikke slette medarbejder', 'error');
@@ -263,14 +293,76 @@ async function deleteEmployee(id, name) {
 // ============================================
 // UTILITY FUNCTIONS
 // ============================================
-function showAlert(message, type) {
-    const container = document.getElementById('alert-container');
+
+function escapeHtml(text) {
+    if (!text) return '';
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+function showAlert(message, type = 'info') {
     const alert = document.createElement('div');
     alert.className = `alert alert-${type}`;
+    alert.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 1rem 1.5rem;
+        background: ${type === 'success' ? '#10b981' : type === 'error' ? '#ef4444' : '#3b82f6'};
+        color: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        z-index: 10000;
+        animation: slideIn 0.3s ease-out;
+        max-width: 400px;
+    `;
     alert.textContent = message;
-    container.appendChild(alert);
+
+    document.body.appendChild(alert);
 
     setTimeout(() => {
-        alert.remove();
-    }, 5000);
+        alert.style.animation = 'slideOut 0.3s ease-out';
+        setTimeout(() => alert.remove(), 300);
+    }, 3000);
+}
+
+// ============================================
+// EVENT LISTENERS
+// ============================================
+
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Admin panel initializing...');
+
+    // Logout button
+    const logoutBtn = document.getElementById('logout-btn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', function() {
+            if (confirm('Er du sikker på at du vil logge ud?')) {
+                sessionStorage.removeItem('adminLoggedIn');
+                sessionStorage.removeItem('adminUsername');
+                window.location.href = 'login.html';
+            }
+        });
+    }
+
+    // Load all data
+    loadDashboard();
+    loadServices();
+    loadEmployees();
+
+    console.log('Admin panel initialized!');
+});
+
+// Close modals when clicking outside
+window.onclick = function(event) {
+    const serviceModal = document.getElementById('service-modal');
+    const employeeModal = document.getElementById('employee-modal');
+
+    if (event.target == serviceModal) {
+        serviceModal.style.display = 'none';
+    }
+    if (event.target == employeeModal) {
+        employeeModal.style.display = 'none';
+    }
 }

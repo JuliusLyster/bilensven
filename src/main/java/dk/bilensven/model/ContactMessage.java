@@ -38,8 +38,8 @@ public class ContactMessage {
     @Size(max = 1000, message = "Besked skal være mindre end 1000 tegn")
     private String message;
 
-    @Column(nullable = false)
-    private Boolean read = false;
+    @Column(name = "is_read", nullable = false)
+    private boolean read;
 
     @CreatedDate
     @Column(nullable = false, updatable = false)
