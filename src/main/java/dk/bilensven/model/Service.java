@@ -47,4 +47,7 @@ public class Service extends BaseEntity {
 
     @LastModifiedDate
     private LocalDateTime updatedAt;
+
+    @Column(name = "image_url")
+    private String imageUrl;
 }

@@ -4,90 +4,60 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Panel - Bilen's Ven</title>
+    <link rel="stylesheet" href="css/styles.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f5f5f5;
-            color: #333;
-        }
-
-        .header {
-            background: #1e3a8a;
-            color: white;
-            padding: 1rem 0;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-
-        .header .container {
+        /* Admin Panel Specific Styles */
+        .admin-container {
             max-width: 1400px;
             margin: 0 auto;
-            padding: 0 2rem;
+            padding: 2rem;
+        }
+
+        .admin-header {
+            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
-        .header h1 {
-            font-size: 1.5rem;
-        }
-
-        .header a {
-            color: white;
-            text-decoration: none;
-            padding: 0.5rem 1rem;
-            border: 1px solid white;
-            border-radius: 4px;
-            transition: background 0.3s;
-        }
-
-        .header a:hover {
-            background: rgba(255,255,255,0.1);
-        }
-
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
-
-        .dashboard {
+        .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 1.5rem;
-            margin-bottom: 2rem;
+            margin-bottom: 3rem;
         }
 
         .stat-card {
             background: white;
-            padding: 1.5rem;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow-md);
         }
 
         .stat-card h3 {
-            color: #666;
-            font-size: 0.9rem;
+            color: var(--text-light);
+            font-size: 0.875rem;
+            font-weight: 500;
             margin-bottom: 0.5rem;
         }
 
-        .stat-card .number {
-            font-size: 2rem;
-            font-weight: bold;
-            color: #1e3a8a;
+        .stat-card p {
+            color: var(--primary);
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 0;
         }
 
-        .section {
+        .admin-section {
             background: white;
+            border-radius: 12px;
             padding: 2rem;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             margin-bottom: 2rem;
+            box-shadow: var(--shadow-md);
         }
 
         .section-header {
@@ -98,46 +68,8 @@
         }
 
         .section-header h2 {
-            color: #1e3a8a;
-        }
-
-        .btn {
-            padding: 0.75rem 1.5rem;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 1rem;
-            transition: transform 0.2s;
-        }
-
-        .btn:hover {
-            transform: translateY(-2px);
-        }
-
-        .btn-primary {
-            background: #1e3a8a;
-            color: white;
-        }
-
-        .btn-success {
-            background: #10b981;
-            color: white;
-        }
-
-        .btn-danger {
-            background: #ef4444;
-            color: white;
-        }
-
-        .btn-secondary {
-            background: #6b7280;
-            color: white;
-        }
-
-        .btn-small {
-            padding: 0.5rem 1rem;
-            font-size: 0.9rem;
-            margin-right: 0.5rem;
+            color: var(--text-dark);
+            margin: 0;
         }
 
         table {
@@ -146,50 +78,116 @@
         }
 
         table thead {
-            background: #f3f4f6;
+            background: var(--bg-light);
         }
 
         table th {
-            text-align: left;
             padding: 1rem;
+            text-align: left;
             font-weight: 600;
-            color: #374151;
+            color: var(--text-dark);
         }
 
         table td {
             padding: 1rem;
-            border-bottom: 1px solid #e5e7eb;
+            border-top: 1px solid #e5e7eb;
         }
 
-        table tr:hover {
-            background: #f9fafb;
+        table tbody tr:hover {
+            background: var(--bg-light);
         }
 
+        .badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .badge-success {
+            background: #dcfce7;
+            color: #16a34a;
+        }
+
+        .badge-danger {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #1e40af;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-secondary {
+            background: #6b7280;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #4b5563;
+        }
+
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .btn-sm.btn-primary {
+            background: var(--primary);
+            color: white;
+            margin-right: 0.5rem;
+        }
+
+        .btn-sm.btn-danger {
+            background: #dc2626;
+            color: white;
+        }
+
+        .btn-sm:hover {
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        /* Modal Styles */
         .modal {
             display: none;
             position: fixed;
-            top: 0;
+            z-index: 1000;
             left: 0;
+            top: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.5);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal.active {
-            display: flex;
+            background: rgba(0, 0, 0, 0.5);
         }
 
         .modal-content {
             background: white;
+            margin: 5% auto;
             padding: 2rem;
-            border-radius: 8px;
-            max-width: 500px;
-            width: 90%;
-            max-height: 90vh;
-            overflow-y: auto;
+            border-radius: 12px;
+            max-width: 600px;
+            box-shadow: var(--shadow-xl);
         }
 
         .modal-header {
@@ -199,37 +197,44 @@
             margin-bottom: 1.5rem;
         }
 
-        .modal-header h2 {
-            color: #1e3a8a;
+        .close {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-light);
+            cursor: pointer;
+            border: none;
+            background: none;
         }
 
-        .close-btn {
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: #666;
+        .close:hover {
+            color: var(--text-dark);
         }
 
         .form-group {
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
         }
 
         .form-group label {
             display: block;
             margin-bottom: 0.5rem;
-            font-weight: 500;
-            color: #374151;
+            font-weight: 600;
+            color: var(--text-dark);
         }
 
         .form-group input,
-        .form-group textarea,
-        .form-group select {
+        .form-group textarea {
             width: 100%;
             padding: 0.75rem;
-            border: 1px solid #d1d5db;
-            border-radius: 4px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
             font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
         }
 
         .form-group textarea {
@@ -237,60 +242,28 @@
             min-height: 100px;
         }
 
-        .form-actions {
+        .checkbox-group {
             display: flex;
-            gap: 1rem;
-            margin-top: 1.5rem;
+            align-items: center;
+            gap: 0.5rem;
         }
 
-        .alert {
-            padding: 1rem;
-            border-radius: 4px;
-            margin-bottom: 1rem;
-        }
-
-        .alert-success {
-            background: #d1fae5;
-            color: #065f46;
-            border: 1px solid #10b981;
-        }
-
-        .alert-error {
-            background: #fee2e2;
-            color: #991b1b;
-            border: 1px solid #ef4444;
-        }
-
-        .badge {
-            display: inline-block;
-            padding: 0.25rem 0.75rem;
-            border-radius: 12px;
-            font-size: 0.85rem;
-            font-weight: 500;
-        }
-
-        .badge-active {
-            background: #d1fae5;
-            color: #065f46;
-        }
-
-        .badge-inactive {
-            background: #fee2e2;
-            color: #991b1b;
+        .checkbox-group input[type="checkbox"] {
+            width: auto;
         }
 
         .loading {
             text-align: center;
-            padding: 2rem;
-            color: #666;
+            padding: 3rem;
+            color: var(--text-light);
         }
 
         .spinner {
+            border: 4px solid #f3f4f6;
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
             width: 40px;
             height: 40px;
-            border: 4px solid #f3f4f6;
-            border-top: 4px solid #1e3a8a;
-            border-radius: 50%;
             animation: spin 1s linear infinite;
             margin: 0 auto 1rem;
         }
@@ -299,110 +272,91 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-
-        @media (max-width: 768px) {
-            .section-header {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .section-header .btn {
-                margin-top: 1rem;
-            }
-
-            table {
-                font-size: 0.9rem;
-            }
-
-            table th,
-            table td {
-                padding: 0.75rem 0.5rem;
-            }
-        }
     </style>
 </head>
 <body>
-<!-- Header -->
-<div class="header">
-    <div class="container">
-        <h1>🔧 Admin Panel - Bilen's Ven</h1>
-        <a href="/">← Tilbage til hjemmeside</a>
-    </div>
-</div>
+<!-- Login Check -->
+<script>
+    if (sessionStorage.getItem('adminLoggedIn') !== 'true') {
+        window.location.href = 'login.html';
+    }
+</script>
 
-<!-- Main Content -->
-<div class="container">
+<div class="admin-container">
+    <!-- Header -->
+    <div class="admin-header">
+        <h1>🔧 Admin Panel - Bilen's Ven</h1>
+        <button id="logout-btn" class="btn btn-secondary">Log Ud</button>
+    </div>
+
     <!-- Dashboard Stats -->
-    <div class="dashboard">
+    <div class="stats-grid">
         <div class="stat-card">
             <h3>Services</h3>
-            <div class="number" id="services-count">-</div>
+            <p id="services-count">-</p>
         </div>
         <div class="stat-card">
             <h3>Medarbejdere</h3>
-            <div class="number" id="employees-count">-</div>
+            <p id="employees-count">-</p>
         </div>
     </div>
 
-    <!-- Alert Messages -->
-    <div id="alert-container"></div>
-
-    <!-- Services Section -->
-    <div class="section">
+    <!-- Services Management -->
+    <section class="admin-section">
         <div class="section-header">
-            <h2>Services</h2>
+            <h2>🛠️ Services</h2>
             <button class="btn btn-primary" onclick="openServiceModal()">+ Ny Service</button>
         </div>
+
         <div id="services-loading" class="loading">
             <div class="spinner"></div>
             <p>Indlæser services...</p>
         </div>
-        <div id="services-table" style="display: none;">
-            <table>
-                <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Navn</th>
-                    <th>Beskrivelse</th>
-                    <th>Pris</th>
-                    <th>Status</th>
-                    <th>Handlinger</th>
-                </tr>
-                </thead>
-                <tbody id="services-tbody">
-                </tbody>
-            </table>
-        </div>
-    </div>
 
-    <!-- Employees Section -->
-    <div class="section">
+        <table id="services-table" style="display: none;">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Navn</th>
+                <th>Beskrivelse</th>
+                <th>Pris</th>
+                <th>Status</th>
+                <th>Handlinger</th>
+            </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </section>
+
+    <!-- Employees Management -->
+    <section class="admin-section">
         <div class="section-header">
-            <h2>Medarbejdere</h2>
+            <h2>👥 Medarbejdere</h2>
             <button class="btn btn-primary" onclick="openEmployeeModal()">+ Ny Medarbejder</button>
         </div>
+
         <div id="employees-loading" class="loading">
             <div class="spinner"></div>
             <p>Indlæser medarbejdere...</p>
         </div>
-        <div id="employees-table" style="display: none;">
-            <table>
-                <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Navn</th>
-                    <th>Position</th>
-                    <th>Email</th>
-                    <th>Telefon</th>
-                    <th>Status</th>
-                    <th>Handlinger</th>
-                </tr>
-                </thead>
-                <tbody id="employees-tbody">
-                </tbody>
-            </table>
-        </div>
-    </div>
+
+        <table id="employees-table" style="display: none;">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Navn</th>
+                <th>Stilling</th>
+                <th>Email</th>
+                <th>Telefon</th>
+                <th>Status</th>
+                <th>Handlinger</th>
+            </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </section>
 </div>
 
 <!-- Service Modal -->
@@ -410,33 +364,37 @@
     <div class="modal-content">
         <div class="modal-header">
             <h2 id="service-modal-title">Ny Service</h2>
-            <button class="close-btn" onclick="closeServiceModal()">×</button>
+            <button class="close" onclick="closeServiceModal()">&times;</button>
         </div>
-        <form id="service-form">
+        <form id="service-form" onsubmit="saveService(event)">
             <input type="hidden" id="service-id">
+
             <div class="form-group">
                 <label for="service-name">Navn *</label>
                 <input type="text" id="service-name" required>
             </div>
+
             <div class="form-group">
-                <label for="service-description">Beskrivelse</label>
-                <textarea id="service-description"></textarea>
+                <label for="service-description">Beskrivelse *</label>
+                <textarea id="service-description" required></textarea>
             </div>
+
             <div class="form-group">
                 <label for="service-price">Pris (DKK) *</label>
                 <input type="number" id="service-price" step="0.01" required>
             </div>
+
             <div class="form-group">
-                <label for="service-active">Status</label>
-                <select id="service-active">
-                    <option value="true">Aktiv</option>
-                    <option value="false">Inaktiv</option>
-                </select>
+                <label for="service-image-url">Billede URL</label>
+                <input type="url" id="service-image-url">
             </div>
-            <div class="form-actions">
-                <button type="submit" class="btn btn-success">Gem</button>
-                <button type="button" class="btn btn-secondary" onclick="closeServiceModal()">Annuller</button>
+
+            <div class="form-group checkbox-group">
+                <input type="checkbox" id="service-active" checked>
+                <label for="service-active">Aktiv</label>
             </div>
+
+            <button type="submit" class="btn btn-primary">Gem</button>
         </form>
     </div>
 </div>
@@ -446,41 +404,42 @@
     <div class="modal-content">
         <div class="modal-header">
             <h2 id="employee-modal-title">Ny Medarbejder</h2>
-            <button class="close-btn" onclick="closeEmployeeModal()">×</button>
+            <button class="close" onclick="closeEmployeeModal()">&times;</button>
         </div>
-        <form id="employee-form">
+        <form id="employee-form" onsubmit="saveEmployee(event)">
             <input type="hidden" id="employee-id">
+
             <div class="form-group">
                 <label for="employee-name">Navn *</label>
                 <input type="text" id="employee-name" required>
             </div>
+
             <div class="form-group">
-                <label for="employee-position">Position *</label>
+                <label for="employee-position">Stilling *</label>
                 <input type="text" id="employee-position" required>
             </div>
+
             <div class="form-group">
                 <label for="employee-email">Email</label>
                 <input type="email" id="employee-email">
             </div>
+
             <div class="form-group">
                 <label for="employee-phone">Telefon</label>
                 <input type="tel" id="employee-phone">
             </div>
+
             <div class="form-group">
-                <label for="employee-imageUrl">Billede URL</label>
-                <input type="text" id="employee-imageUrl">
+                <label for="employee-image-url">Billede URL</label>
+                <input type="url" id="employee-image-url">
             </div>
-            <div class="form-group">
-                <label for="employee-active">Status</label>
-                <select id="employee-active">
-                    <option value="true">Aktiv</option>
-                    <option value="false">Inaktiv</option>
-                </select>
+
+            <div class="form-group checkbox-group">
+                <input type="checkbox" id="employee-active" checked>
+                <label for="employee-active">Aktiv</label>
             </div>
-            <div class="form-actions">
-                <button type="submit" class="btn btn-success">Gem</button>
-                <button type="button" class="btn btn-secondary" onclick="closeEmployeeModal()">Annuller</button>
-            </div>
+
+            <button type="submit" class="btn btn-primary">Gem</button>
         </form>
     </div>
 </div>

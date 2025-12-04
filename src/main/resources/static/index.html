@@ -3,77 +3,98 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bilen's Ven - Bilværksted i Ishøj</title>
+    <title>Bilen's Ven - Din Pålidelige Bilværksted</title>
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-<!-- Header -->
-<header class="header">
+<!-- Navigation -->
+<nav class="navbar">
     <div class="container">
-        <div class="logo">
+        <div class="nav-brand">
             <h1>Bilen's Ven</h1>
         </div>
-        <nav class="nav">
-            <a href="#services">Services</a>
-            <a href="#employees">Medarbejdere</a>
-            <a href="#contact">Kontakt</a>
-        </nav>
+        <div class="nav-links">
+            <a href="index.html" class="active">Hjem</a>
+            <a href="services.html">Services</a>
+            <a href="medarbejdere.html">Medarbejdere</a>
+            <a href="#kontakt">Kontakt</a>
+        </div>
     </div>
-</header>
+</nav>
 
 <!-- Hero Section -->
 <section class="hero">
     <div class="container">
-        <h2>Dit lokale værksted i Ishøj</h2>
-        <p>Professionel bilservice siden 2024 </p>
-        <a href="#contact" class="btn btn-primary">Kontakt os</a>
+        <h1>Velkommen til Bilen's Ven</h1>
+        <p>Din pålidelige partner for bilreparationer og service i Ishøj</p>
+        <div class="hero-buttons">
+            <a href="services.html" class="btn btn-primary">Se Vores Services</a>
+            <a href="#kontakt" class="btn btn-secondary">Kontakt Os</a>
+        </div>
     </div>
 </section>
 
-<!-- Services Section -->
-<section id="services" class="section">
+<!-- Quick Info -->
+<section class="section">
     <div class="container">
-        <h2 class="section-title">Vores Services</h2>
-
-        <!-- Loading State -->
-        <div id="services-loading" class="loading">
-            <div class="spinner"></div>
-            <p>Henter services...</p>
+        <div class="info-grid">
+            <div class="info-card">
+                <h3>🔧 Professionel Service</h3>
+                <p>Erfarne mekanikere med mange års erfaring</p>
+            </div>
+            <div class="info-card">
+                <h3>⚡ Hurtig Levering</h3>
+                <p>Vi værdsætter din tid og arbejder effektivt</p>
+            </div>
+            <div class="info-card">
+                <h3>💰 Konkurrencedygtige Priser</h3>
+                <p>Kvalitet til rimelige priser</p>
+            </div>
         </div>
-
-        <!-- Error State -->
-        <div id="services-error" class="error hidden">
-            <p>Kunne ikke hente services. Prøv igen senere.</p>
-        </div>
-
-        <!-- Services Grid -->
-        <div id="services-grid" class="grid hidden"></div>
-    </div>
-</section>
-
-<!-- Employees Section -->
-<section id="employees" class="section section-gray">
-    <div class="container">
-        <h2 class="section-title">Vores Team</h2>
-
-        <div id="employees-loading" class="loading">
-            <div class="spinner"></div>
-            <p>Henter medarbejdere...</p>
-        </div>
-
-        <div id="employees-error" class="error hidden">
-            <p>Kunne ikke hente medarbejdere.</p>
-        </div>
-
-        <div id="employees-grid" class="grid hidden"></div>
     </div>
 </section>
 
 <!-- Contact Section -->
-<section id="contact" class="section">
+<section id="kontakt" class="section section-alt">
     <div class="container">
         <h2 class="section-title">Kontakt Os</h2>
-        <!-- Will be added in US-3.2 -->
+
+        <div class="contact-wrapper">
+            <div class="contact-info">
+                <h3>Kom forbi eller kontakt os</h3>
+                <p><strong>📍 Adresse:</strong> Ishøj, Danmark</p>
+                <p><strong>📞 Telefon:</strong> +45 XX XX XX XX</p>
+                <p><strong>✉️ Email:</strong> info@bilensven.dk</p>
+                <p><strong>🕐 Åbningstider:</strong></p>
+                <p>Man-Fre: 08:00 - 17:00<br>Lør: 09:00 - 13:00<br>Søn: Lukket</p>
+            </div>
+
+            <div class="contact-form-wrapper">
+                <form id="contact-form" class="contact-form">
+                    <div class="form-group">
+                        <label for="contact-name">Navn *</label>
+                        <input type="text" id="contact-name" name="name" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="contact-email">Email *</label>
+                        <input type="email" id="contact-email" name="email" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="contact-phone">Telefon</label>
+                        <input type="tel" id="contact-phone" name="phone">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="contact-message">Besked *</label>
+                        <textarea id="contact-message" name="message" rows="5" required></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Send Besked</button>
+                </form>
+            </div>
+        </div>
     </div>
 </section>
 
@@ -85,7 +106,6 @@
 </footer>
 
 <script src="js/api.js"></script>
-<script src="js/services.js"></script>
-<script src="js/employees.js"></script>
+<script src="js/contact.js"></script>
 </body>
 </html>
