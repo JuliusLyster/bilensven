@@ -1,57 +1,79 @@
-  name: Publish Docker Image
+name: Build and Publish Docker Image
 
-  on:
-    push:
-      branches: [main]
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
 
-  env:
-    REGISTRY: ghcr.io
-    IMAGE_NAME: ${{ github.repository }}
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
 
-  jobs:
-    test:
-      runs-on: ubuntu-latest
-      steps:
-        - name: Checkout code
-          uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
 
-        - name: Set up JDK 17
-          uses: actions/setup-java@387ac29b308b003ca37ba93a6cab5eb57c8f5f93 # v4.0.0
-          with:
-            java-version: '24'
-            distribution: 'temurin'
-            cache: 'maven'
+    steps:
+      # STEP 1: CHECKOUT KODE
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-        - name: Run tests
-          run: mvn test -B
+      # STEP 2: SETUP JAVA
+      - name: Set up JDK 24
+        uses: actions/setup-java@v4
+        with:
+          java-version: '24'
+          distribution: 'temurin'
+          cache: 'maven'
 
-    build-and-push:
-      needs: test
-      runs-on: ubuntu-latest
-      permissions:
-        contents: read
-        packages: write
+      # STEP 3: BUILD & TEST MED MAVEN
+      # mvn package kører automatisk:
+      # 1. compile
+      # 2. test
+      # 3. package (laver JAR fil)
+      # Hvis tests fejler, stopper workflow'en her
+      - name: Build and test with Maven
+        run: mvn clean package -B
 
-      steps:
-        - name: Checkout code
-          uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+      # STEP 4: DOCKER BUILD SETUP (For Caching)
+      - name: Set up Docker Build
+        uses: docker/setup-buildx-action@v3
 
-        - name: Log in to GitHub Container Registry
-          uses: docker/login-action@343f7c4344506bcbf9b4de18042ae17996df046d # v3.0.0
-          with:
-            registry: ${{ env.REGISTRY }}
-            username: ${{ github.actor }}
-            password: ${{ secrets.GITHUB_TOKEN }}
 
-        - name: Extract metadata for Docker
-          id: meta
-          uses: docker/metadata-action@8e5442c4ef9f78752691e2d8f8d19755c6f78e81 # v5.5.1
-          with:
-            images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-        - name: Build and push Docker image
-          uses: docker/build-push-action@4a13e500e55cf31b7a5d59a38ab2040ab0f42f56 # v5.1.0
-          with:
-            context: .
-            push: true
-            tags: ${{ steps.meta.outputs.tags }}
-            labels: ${{ steps.meta.outputs.labels }}
+      # STEP 5: LOGIN TIL GITHUB CONTAINER REGISTRY
+      # Kun hvis push til main (ikke PR)
+      - name: Log in to GitHub Container Registry
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # STEP 6: GENERER DOCKER METADATA
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=sha,prefix={{branch}}-
+            type=raw,value=latest,enable={{is_default_branch}}
+
+      # STEP 7: BUILD OG PUSH DOCKER IMAGE
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          # Push kun hvis det er push til main (ikke PR)
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
