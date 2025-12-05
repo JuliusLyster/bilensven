@@ -272,6 +272,58 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+        /* Force Button Visibility */
+        table td button.btn-sm {
+            display: inline-block !important;
+            opacity: 1 !important;
+            visibility: visible !important;
+        }
+
+        table td button.btn-sm.btn-primary {
+            background-color: #2563eb !important;
+            color: white !important;
+            border: 1px solid #2563eb !important;
+        }
+
+        table td button.btn-sm.btn-danger {
+            background-color: #dc2626 !important;
+            color: white !important;
+            border: 1px solid #dc2626 !important;
+        }
+        /* Modal Form Buttons */
+        .modal-content form button[type="submit"],
+        .modal-content form .btn {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+        }
+
+        .modal-content form button[type="submit"]:hover,
+        .modal-content form .btn:hover {
+            background: #1e40af;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+        }
+
+        /* Force visibility */
+        button.btn,
+        button.btn-primary,
+        button[type="submit"] {
+            display: inline-block !important;
+            opacity: 1 !important;
+            visibility: visible !important;
+            background-color: #2563eb !important;
+            color: white !important;
+            border: 2px solid #2563eb !important;
+        }
     </style>
 </head>
 <body>

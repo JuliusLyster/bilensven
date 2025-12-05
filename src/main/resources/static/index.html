@@ -3,109 +3,821 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bilen's Ven - Din Pålidelige Bilværksted</title>
-    <link rel="stylesheet" href="css/styles.css">
+    <title>Bilen's Ven - Professionelt Bilværksted i Ishøj</title>
+    <style>
+        /* ============================================ */
+        /* RESET & BASE STYLES */
+        /* ============================================ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* ============================================ */
+        /* NAVIGATION */
+        /* ============================================ */
+        .hero-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(30, 41, 59, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 100;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            font-size: 1.75rem;
+            font-weight: 800;
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-logo span {
+            color: #3b82f6;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-menu a {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: color 0.3s ease;
+        }
+
+        .nav-menu a:hover {
+            color: #3b82f6;
+        }
+
+        /* ============================================ */
+        /* HERO SECTION */
+        /* ============================================ */
+        .hero-section {
+            position: relative;
+            height: 100vh;
+            min-height: 600px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .hero-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        .hero-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.4));
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            color: white;
+            max-width: 900px;
+            padding: 2rem;
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+            text-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+        }
+
+        .hero-subtitle {
+            font-size: 1.25rem;
+            line-height: 1.6;
+            margin-bottom: 2.5rem;
+            color: rgba(255, 255, 255, 0.95);
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-hero {
+            padding: 1rem 2.5rem;
+            font-size: 1rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-hero.primary {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .btn-hero.primary:hover {
+            background: #2563eb;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.4);
+        }
+
+        .btn-hero.secondary {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+
+        .btn-hero.secondary:hover {
+            background: white;
+            color: #1e293b;
+            transform: translateY(-2px);
+        }
+
+        /* ============================================ */
+        /* FLOATING CONTACT BAR */
+        /* ============================================ */
+        .contact-bar {
+            position: fixed;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 90;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .contact-btn {
+            background: #3b82f6;
+            color: white;
+            padding: 1.25rem 1rem;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.875rem;
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            transition: all 0.3s ease;
+            box-shadow: -3px 0 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .contact-btn:hover {
+            background: #2563eb;
+            padding-left: 1.5rem;
+        }
+
+        .contact-btn.phone {
+            background: #10b981;
+        }
+
+        .contact-btn.phone:hover {
+            background: #059669;
+        }
+
+        /* ============================================ */
+        /* FEATURES SECTION */
+        /* ============================================ */
+        .features {
+            padding: 5rem 2rem;
+            background: white;
+        }
+
+        .features-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #1e293b;
+            margin-bottom: 3rem;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .feature-card {
+            text-align: center;
+            padding: 2rem;
+            border-radius: 12px;
+            background: #f8fafc;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card h3 {
+            font-size: 1.5rem;
+            color: #1e293b;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card p {
+            color: #64748b;
+            line-height: 1.6;
+        }
+
+        /* ============================================ */
+        /* CONTACT SECTION */
+        /* ============================================ */
+        .contact-section {
+            padding: 5rem 2rem;
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .contact-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                    radial-gradient(circle at 20% 50%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+                    radial-gradient(circle at 80% 80%, rgba(59, 130, 246, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .contact-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .contact-info-side {
+            color: white;
+        }
+
+        .contact-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            color: white;
+        }
+
+        .contact-subtitle {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 3rem;
+        }
+
+        .contact-info-grid {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .contact-info-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .contact-info-card:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(59, 130, 246, 0.5);
+            transform: translateX(5px);
+        }
+
+        .contact-icon {
+            font-size: 2rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .contact-info-card h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: white;
+        }
+
+        .contact-info-card p {
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        .contact-info-card a {
+            color: #3b82f6;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        .contact-info-card a:hover {
+            color: #60a5fa;
+        }
+
+        .contact-form-side {
+            background: white;
+            border-radius: 16px;
+            padding: 2.5rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .modern-form {
+            width: 100%;
+        }
+
+        .form-title {
+            font-size: 1.75rem;
+            font-weight: 800;
+            color: #1e293b;
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            background: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .btn-submit:hover {
+            background: #2563eb;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-arrow {
+            transition: transform 0.3s ease;
+        }
+
+        .btn-submit:hover .btn-arrow {
+            transform: translateX(5px);
+        }
+
+        /* ============================================ */
+        /* FOOTER */
+        /* ============================================ */
+        .modern-footer {
+            background: #0f172a;
+            color: white;
+            padding: 3rem 2rem 1.5rem;
+        }
+
+        .footer-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 3rem;
+            margin-bottom: 2rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .footer-brand h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-brand p {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .footer-links h4,
+        .footer-contact h4 {
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .footer-links ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: #3b82f6;
+        }
+
+        .footer-contact p {
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.9rem;
+        }
+
+        /* ============================================ */
+        /* RESPONSIVE */
+        /* ============================================ */
+        @media (max-width: 968px) {
+            .contact-container {
+                grid-template-columns: 1fr;
+                gap: 3rem;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-menu {
+                display: none;
+            }
+
+            .hero-title {
+                font-size: 2.5rem;
+            }
+
+            .hero-subtitle {
+                font-size: 1.1rem;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+            }
+
+            .btn-hero {
+                width: 100%;
+            }
+
+            .contact-bar {
+                display: none;
+            }
+
+            .contact-section {
+                padding: 3rem 1.5rem;
+            }
+
+            .contact-form-side {
+                padding: 2rem 1.5rem;
+            }
+
+            .contact-title {
+                font-size: 1.75rem;
+            }
+        }
+    </style>
 </head>
 <body>
 <!-- Navigation -->
-<nav class="navbar">
-    <div class="container">
-        <div class="nav-brand">
-            <h1>Bilen's Ven</h1>
-        </div>
-        <div class="nav-links">
-            <a href="index.html" class="active">Hjem</a>
-            <a href="services.html">Services</a>
-            <a href="medarbejdere.html">Medarbejdere</a>
-            <a href="#kontakt">Kontakt</a>
-        </div>
+<nav class="hero-nav">
+    <div class="nav-container">
+        <a href="index.html" class="nav-logo">
+            🔧 BILEN'S <span>VEN</span>
+        </a>
+        <ul class="nav-menu">
+            <li><a href="services.html">Services</a></li>
+            <li><a href="medarbejdere.html">Medarbejdere</a></li>
+            <li><a href="#kontakt">Kontakt</a></li>
+            <li><a href="login.html">Admin</a></li>
+        </ul>
     </div>
 </nav>
 
 <!-- Hero Section -->
-<section class="hero">
-    <div class="container">
-        <h1>Velkommen til Bilen's Ven</h1>
-        <p>Din pålidelige partner for bilreparationer og service i Ishøj</p>
+<section class="hero-section">
+    <div class="hero-background"></div>
+    <div class="hero-overlay"></div>
+
+    <div class="hero-content">
+        <h1 class="hero-title">Professionel bilservice i Ishøj</h1>
+        <p class="hero-subtitle">
+            Vi tilbyder et bredt udvalg af professionelle bilservices med mange års erfaring.
+            Fra simpel olieskift til komplekse reparationer - vi tager os af din bil.
+        </p>
         <div class="hero-buttons">
-            <a href="services.html" class="btn btn-primary">Se Vores Services</a>
-            <a href="#kontakt" class="btn btn-secondary">Kontakt Os</a>
+            <a href="services.html" class="btn-hero primary">Se Vores Services</a>
+            <a href="#kontakt" class="btn-hero secondary">Kontakt Os</a>
         </div>
     </div>
 </section>
 
-<!-- Quick Info -->
-<section class="section">
-    <div class="container">
-        <div class="info-grid">
-            <div class="info-card">
-                <h3>🔧 Professionel Service</h3>
-                <p>Erfarne mekanikere med mange års erfaring</p>
+<!-- Floating Contact Bar -->
+<div class="contact-bar">
+    <a href="tel:+4512345678" class="contact-btn phone">☎ RING TIL OS</a>
+    <a href="services.html" class="contact-btn">📅 SE SERVICES</a>
+</div>
+
+<!-- Features Section -->
+<section class="features">
+    <div class="features-container">
+        <h2 class="section-title">Hvorfor Vælge Bilen's Ven?</h2>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">⚡</div>
+                <h3>Hurtig Service</h3>
+                <p>Vi værdsætter din tid og arbejder effektivt for at få dig hurtigt på vejen igen.</p>
             </div>
-            <div class="info-card">
-                <h3>⚡ Hurtig Levering</h3>
-                <p>Vi værdsætter din tid og arbejder effektivt</p>
+
+            <div class="feature-card">
+                <div class="feature-icon">👨‍🔧</div>
+                <h3>Erfarne Mekanikere</h3>
+                <p>Vores team har mange års erfaring med alle bilmærker og modeller.</p>
             </div>
-            <div class="info-card">
-                <h3>💰 Konkurrencedygtige Priser</h3>
-                <p>Kvalitet til rimelige priser</p>
+
+            <div class="feature-card">
+                <div class="feature-icon">💰</div>
+                <h3>Fair Priser</h3>
+                <p>Vi tilbyder konkurrencedygtige priser uden at gå på kompromis med kvaliteten.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">🔍</div>
+                <h3>Gratis Konsultation</h3>
+                <p>Vi giver altid en grundig gennemgang og et ærligt estimat før arbejdet påbegyndes.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">✅</div>
+                <h3>Kvalitetsgaranti</h3>
+                <p>Alt vores arbejde er dækket af garanti, så du kan køre trygt.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">📍</div>
+                <h3>Central Beliggenhed</h3>
+                <p>Let tilgængeligt værksted i Ishøj med gode parkeringsmuligheder.</p>
             </div>
         </div>
     </div>
 </section>
 
 <!-- Contact Section -->
-<section id="kontakt" class="section section-alt">
-    <div class="container">
-        <h2 class="section-title">Kontakt Os</h2>
+<section id="kontakt" class="contact-section">
+    <div class="contact-container">
+        <!-- Contact Info Side -->
+        <div class="contact-info-side">
+            <h2 class="contact-title">Kontakt Os</h2>
+            <p class="contact-subtitle">
+                Vi er altid klar til at hjælpe dig. Send os en besked eller kontakt os direkte.
+            </p>
 
-        <div class="contact-wrapper">
-            <div class="contact-info">
-                <h3>Kom forbi eller kontakt os</h3>
-                <p><strong>📍 Adresse:</strong> Ishøj, Danmark</p>
-                <p><strong>📞 Telefon:</strong> +45 XX XX XX XX</p>
-                <p><strong>✉️ Email:</strong> info@bilensven.dk</p>
-                <p><strong>🕐 Åbningstider:</strong></p>
-                <p>Man-Fre: 08:00 - 17:00<br>Lør: 09:00 - 13:00<br>Søn: Lukket</p>
+            <div class="contact-info-grid">
+                <div class="contact-info-card">
+                    <div class="contact-icon">📍</div>
+                    <h3>Besøg Os</h3>
+                    <p>Ishøj Stationsvej 1<br>2635 Ishøj</p>
+                </div>
+
+                <div class="contact-info-card">
+                    <div class="contact-icon">📞</div>
+                    <h3>Ring Til Os</h3>
+                    <p><a href="tel:+4512345678">+45 12 34 56 78</a></p>
+                </div>
+
+                <div class="contact-info-card">
+                    <div class="contact-icon">📧</div>
+                    <h3>Send Email</h3>
+                    <p><a href="mailto:kontakt@bilensven.dk">kontakt@bilensven.dk</a></p>
+                </div>
+
+                <div class="contact-info-card">
+                    <div class="contact-icon">🕒</div>
+                    <h3>Åbningstider</h3>
+                    <p>
+                        Man-Fre: 08:00 - 17:00<br>
+                        Lør: 09:00 - 14:00<br>
+                        Søn: Lukket
+                    </p>
+                </div>
             </div>
+        </div>
 
-            <div class="contact-form-wrapper">
-                <form id="contact-form" class="contact-form">
-                    <div class="form-group">
-                        <label for="contact-name">Navn *</label>
-                        <input type="text" id="contact-name" name="name" required>
-                    </div>
+        <!-- Contact Form Side -->
+        <div class="contact-form-side">
+            <form id="contact-form" class="modern-form">
+                <h3 class="form-title">Send Os En Besked</h3>
 
-                    <div class="form-group">
-                        <label for="contact-email">Email *</label>
-                        <input type="email" id="contact-email" name="email" required>
-                    </div>
+                <div class="form-group">
+                    <label for="name">Navn *</label>
+                    <input type="text" id="name" required placeholder="Dit fulde navn">
+                </div>
 
-                    <div class="form-group">
-                        <label for="contact-phone">Telefon</label>
-                        <input type="tel" id="contact-phone" name="phone">
-                    </div>
+                <div class="form-group">
+                    <label for="email">Email *</label>
+                    <input type="email" id="email" required placeholder="din@email.dk">
+                </div>
 
-                    <div class="form-group">
-                        <label for="contact-message">Besked *</label>
-                        <textarea id="contact-message" name="message" rows="5" required></textarea>
-                    </div>
+                <div class="form-group">
+                    <label for="phone">Telefon</label>
+                    <input type="tel" id="phone" placeholder="+45 12 34 56 78">
+                </div>
 
-                    <button type="submit" class="btn btn-primary">Send Besked</button>
-                </form>
-            </div>
+                <div class="form-group">
+                    <label for="message">Besked *</label>
+                    <textarea id="message" required rows="5" placeholder="Hvad kan vi hjælpe dig med?"></textarea>
+                </div>
+
+                <button type="submit" class="btn-submit">
+                    Send Besked
+                    <span class="btn-arrow">→</span>
+                </button>
+            </form>
         </div>
     </div>
 </section>
 
 <!-- Footer -->
-<footer class="footer">
-    <div class="container">
-        <p>&copy; 2024 Bilen's Ven. Alle rettigheder forbeholdes.</p>
+<footer class="modern-footer">
+    <div class="footer-container">
+        <div class="footer-content">
+            <div class="footer-brand">
+                <h3>🔧 BILEN'S VEN</h3>
+                <p>Din lokale bilekspert i Ishøj</p>
+            </div>
+
+            <div class="footer-links">
+                <h4>Links</h4>
+                <ul>
+                    <li><a href="services.html">Services</a></li>
+                    <li><a href="medarbejdere.html">Medarbejdere</a></li>
+                    <li><a href="#kontakt">Kontakt</a></li>
+                    <li><a href="login.html">Admin</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-contact">
+                <h4>Kontakt</h4>
+                <p>📞 +45 12 34 56 78</p>
+                <p>📧 kontakt@bilensven.dk</p>
+                <p>📍 Ishøj Stationsvej 1, 2635 Ishøj</p>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2024 Bilen's Ven. Alle rettigheder forbeholdes.</p>
+        </div>
     </div>
 </footer>
 
-<script src="js/api.js"></script>
-<script src="js/contact.js"></script>
+<!-- Scripts -->
+<script>
+    // Contact Form Handler
+    document.getElementById('contact-form').addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const data = {
+            name: document.getElementById('name').value,
+            email: document.getElementById('email').value,
+            phone: document.getElementById('phone').value,
+            message: document.getElementById('message').value
+        };
+
+        try {
+            const response = await fetch('http://localhost:8080/api/contact', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+
+            if (response.ok) {
+                alert('✅ Tak for din henvendelse! Vi vender tilbage hurtigst muligt.');
+                this.reset();
+            } else {
+                alert('❌ Der opstod en fejl. Prøv venligst igen.');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('❌ Der opstod en fejl. Prøv venligst igen.');
+        }
+    });
+
+    // Smooth Scroll
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+</script>
 </body>
 </html>
