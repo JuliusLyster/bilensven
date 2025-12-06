@@ -12,25 +12,34 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 
+// Logger support
 @Slf4j
+// Spring component (auto-instantieret)
 @Component
+// Constructor med final fields (Lombok)
 @RequiredArgsConstructor
 public class DataInitializer {
 
+    // Repository til employees
     private final EmployeeRepository employeeRepository;
+
+    // Repository til services
     private final ServiceRepository serviceRepository;
 
+    // Enable/disable initialization (application.properties)
     @Value("${app.data.initialize-on-startup:true}")
     private boolean shouldInitialize;
 
+    // Kører ved application startup
     @PostConstruct
     public void init() {
+        // Check om disabled
         if (!shouldInitialize) {
             log.info("Data initialization disabled");
             return;
         }
 
-        // Only initialize if database is empty
+        // Kun initializer hvis database er tom
         if (employeeRepository.count() == 0 && serviceRepository.count() == 0) {
             log.info("Initializing test data...");
             initializeEmployees();
@@ -41,6 +50,7 @@ public class DataInitializer {
         }
     }
 
+    // Opret 3 medarbejdere
     private void initializeEmployees() {
         // Michael Hansen - Ejer
         Employee employee1 = new Employee();
@@ -72,7 +82,9 @@ public class DataInitializer {
         log.info("Created {} employees", employeeRepository.count());
     }
 
+    // Opret 10 services
     private void initializeServices() {
+        // Basic maintenance
         createService(
                 "Olieskift",
                 "Komplet olieskift inkl. oliefilter og ny motorolie",
@@ -80,6 +92,7 @@ public class DataInitializer {
                 "https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?w=400"
         );
 
+        // Bremser
         createService(
                 "Bremseservice",
                 "Kontrol og udskiftning af bremseklodser, inkl. arbejdsløn",
@@ -87,6 +100,7 @@ public class DataInitializer {
                 "https://images.unsplash.com/photo-1625047509168-a7026f36de04?w=400"
         );
 
+        // Sæson service
         createService(
                 "Dækskift",
                 "Sæsonmæssigt dækskift inkl. afbalancering",
@@ -94,6 +108,7 @@ public class DataInitializer {
                 "https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?w=400"
         );
 
+        // AC service
         createService(
                 "Aircondition service",
                 "Kontrol, rensning og genopfyldning af aircondition anlæg",
@@ -101,6 +116,7 @@ public class DataInitializer {
                 "https://images.unsplash.com/photo-1621905251918-48416bd8575a?w=400"
         );
 
+        // Diagnostik
         createService(
                 "Fejlfinding",
                 "Computerdiagnostik og fejlfinding pr. time",
@@ -108,6 +124,7 @@ public class DataInitializer {
                 "https://images.unsplash.com/photo-1613214149929-b3a2e9b66a2e?w=400"
         );
 
+        // Major repair
         createService(
                 "Kobling udskiftning",
                 "Udskiftning af kobling inkl. arbejdsløn",
@@ -115,6 +132,7 @@ public class DataInitializer {
                 "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=400"
         );
 
+        // Syn
         createService(
                 "Periodisk syn",
                 "Forberedelse og gennemførelse af periodisk syn",
@@ -122,6 +140,7 @@ public class DataInitializer {
                 "https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?w=400"
         );
 
+        // Comprehensive service
         createService(
                 "Motorservice",
                 "Stor motorservice med udskiftning af alle væsker og filtre",
@@ -129,6 +148,7 @@ public class DataInitializer {
                 "https://images.unsplash.com/photo-1487754180451-c456f719a1fc?w=400"
         );
 
+        // Undersvogn
         createService(
                 "Rustbehandling",
                 "Professionel rustbehandling og undersvognsbehandling",
@@ -136,6 +156,7 @@ public class DataInitializer {
                 "https://images.unsplash.com/photo-1616422285623-13ff0162193c?w=400"
         );
 
+        // Affjedring
         createService(
                 "Støddæmpere",
                 "Udskiftning af støddæmpere for og bag, inkl. arbejdsløn",
@@ -146,6 +167,7 @@ public class DataInitializer {
         log.info("Created {} services", serviceRepository.count());
     }
 
+    // Helper: Opret enkelt service
     private void createService(String name, String description, double price, String imageUrl) {
         Service service = new Service();
         service.setName(name);
