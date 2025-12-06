@@ -3,8 +3,6 @@ name: Build and Publish Docker Image
 on:
   push:
     branches: [main]
-  pull_request:
-    branches: [main]
 
 env:
   REGISTRY: ghcr.io
@@ -40,14 +38,11 @@ jobs:
         run: mvn clean package -B
 
       # STEP 4: DOCKER BUILD SETUP (For Caching)
-      - name: Set up Docker Build
+      - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-
       # STEP 5: LOGIN TIL GITHUB CONTAINER REGISTRY
-      # Kun hvis push til main (ikke PR)
       - name: Log in to GitHub Container Registry
-        if: github.event_name != 'pull_request'
         uses: docker/login-action@v3
         with:
           registry: ${{ env.REGISTRY }}
@@ -61,24 +56,19 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
-            # Branch navn (main, develop, etc.)
+            # Branch navn (main)
             type=ref,event=branch
-            # PR nummer (pr-99)
-            type=ref,event=pr
-            # SHA for main branch (main-abc123)
-            type=sha,prefix=main-,enable=${{ github.ref == 'refs/heads/main' }}
-            # SHA for PR (pr-99-abc123)
-            type=sha,prefix=pr-${{ github.event.pull_request.number }}-,enable=${{ github.event_name == 'pull_request' }}
-            # Latest tag (kun på main)
-            type=raw,value=latest,enable={{is_default_branch}}
+            # SHA med prefix (main-abc1234)
+            type=sha,prefix=main-
+            # Latest tag (altid på main)
+            type=raw,value=latest
 
       # STEP 7: BUILD OG PUSH DOCKER IMAGE
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
         with:
           context: .
-          # Push kun hvis det er push til main (ikke PR)
-          push: ${{ github.event_name != 'pull_request' }}
+          push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
