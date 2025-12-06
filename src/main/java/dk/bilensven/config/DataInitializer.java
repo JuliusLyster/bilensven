@@ -20,10 +20,7 @@ import java.math.BigDecimal;
 @RequiredArgsConstructor
 public class DataInitializer {
 
-    // Repository til employees
     private final EmployeeRepository employeeRepository;
-
-    // Repository til services
     private final ServiceRepository serviceRepository;
 
     // Enable/disable initialization (application.properties)
@@ -50,9 +47,7 @@ public class DataInitializer {
         }
     }
 
-    // Opret 3 medarbejdere
     private void initializeEmployees() {
-        // Michael Hansen - Ejer
         Employee employee1 = new Employee();
         employee1.setName("Michael Hansen");
         employee1.setPosition("Ejer & Hovedmekaniker");
@@ -61,7 +56,6 @@ public class DataInitializer {
         employee1.setActive(true);
         employeeRepository.save(employee1);
 
-        // Lars Nielsen - Mekaniker
         Employee employee2 = new Employee();
         employee2.setName("Lars Nielsen");
         employee2.setPosition("Mekaniker");
@@ -70,7 +64,6 @@ public class DataInitializer {
         employee2.setActive(true);
         employeeRepository.save(employee2);
 
-        // Peter Jensen - Lærling
         Employee employee3 = new Employee();
         employee3.setName("Peter Jensen");
         employee3.setPosition("Lærling");
@@ -82,9 +75,7 @@ public class DataInitializer {
         log.info("Created {} employees", employeeRepository.count());
     }
 
-    // Opret 10 services
     private void initializeServices() {
-        // Basic maintenance
         createService(
                 "Olieskift",
                 "Komplet olieskift inkl. oliefilter og ny motorolie",
@@ -92,7 +83,6 @@ public class DataInitializer {
                 "https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?w=400"
         );
 
-        // Bremser
         createService(
                 "Bremseservice",
                 "Kontrol og udskiftning af bremseklodser, inkl. arbejdsløn",
@@ -100,7 +90,6 @@ public class DataInitializer {
                 "https://images.unsplash.com/photo-1625047509168-a7026f36de04?w=400"
         );
 
-        // Sæson service
         createService(
                 "Dækskift",
                 "Sæsonmæssigt dækskift inkl. afbalancering",
@@ -108,7 +97,6 @@ public class DataInitializer {
                 "https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?w=400"
         );
 
-        // AC service
         createService(
                 "Aircondition service",
                 "Kontrol, rensning og genopfyldning af aircondition anlæg",
@@ -116,7 +104,6 @@ public class DataInitializer {
                 "https://images.unsplash.com/photo-1621905251918-48416bd8575a?w=400"
         );
 
-        // Diagnostik
         createService(
                 "Fejlfinding",
                 "Computerdiagnostik og fejlfinding pr. time",
@@ -124,7 +111,6 @@ public class DataInitializer {
                 "https://images.unsplash.com/photo-1613214149929-b3a2e9b66a2e?w=400"
         );
 
-        // Major repair
         createService(
                 "Kobling udskiftning",
                 "Udskiftning af kobling inkl. arbejdsløn",
@@ -132,7 +118,6 @@ public class DataInitializer {
                 "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=400"
         );
 
-        // Syn
         createService(
                 "Periodisk syn",
                 "Forberedelse og gennemførelse af periodisk syn",
@@ -140,7 +125,6 @@ public class DataInitializer {
                 "https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?w=400"
         );
 
-        // Comprehensive service
         createService(
                 "Motorservice",
                 "Stor motorservice med udskiftning af alle væsker og filtre",
@@ -148,7 +132,6 @@ public class DataInitializer {
                 "https://images.unsplash.com/photo-1487754180451-c456f719a1fc?w=400"
         );
 
-        // Undersvogn
         createService(
                 "Rustbehandling",
                 "Professionel rustbehandling og undersvognsbehandling",
@@ -156,7 +139,6 @@ public class DataInitializer {
                 "https://images.unsplash.com/photo-1616422285623-13ff0162193c?w=400"
         );
 
-        // Affjedring
         createService(
                 "Støddæmpere",
                 "Udskiftning af støddæmpere for og bag, inkl. arbejdsløn",
