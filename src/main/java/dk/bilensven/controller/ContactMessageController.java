@@ -12,14 +12,15 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
-// REST API Controller for kontaktformular beskeder
 @RestController
-// Base URL
+// REST API Controller for kontaktformular beskeder
 @RequestMapping("/api/contact")
-// Lombok: Auto-generate constructor for final fields
+// Base URL
 @RequiredArgsConstructor
-// Lombok: Tilføj logger (log.info, log.error, etc.)
+// Lombok: Auto-generate constructor for final fields
 @Slf4j
+// Lombok: Tilføj logger (log.info, log.error, etc.)
+
 public class ContactMessageController {
 
     // Service layer dependency
