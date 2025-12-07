@@ -2,7 +2,6 @@ package dk.bilensven.controller;
 
 import dk.bilensven.dto.ContactMessageDTO;
 import dk.bilensven.service.ContactMessageService;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,21 +12,23 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
+// REST API Controller for kontaktformular beskeder
 @RestController
+// Base URL
 @RequestMapping("/api/contact")
+// Lombok: Auto-generate constructor for final fields
 @RequiredArgsConstructor
+// Lombok: Tilføj logger (log.info, log.error, etc.)
 @Slf4j
 public class ContactMessageController {
 
+    // Service layer dependency
     private final ContactMessageService contactMessageService;
 
+    // POST: Modtag og gem kontaktformular
     @PostMapping
-    public ResponseEntity<?> submitContactForm(
-            @Valid @RequestBody ContactMessageDTO dto,
-            HttpServletRequest request) {
-
-        String ipAddress = getClientIP(request);
-        log.info("POST /api/contact from IP: {}", ipAddress);
+    public ResponseEntity<?> submitContactForm(@Valid @RequestBody ContactMessageDTO dto) {
+        log.info("POST /api/contact - New contact message received");
 
         ContactMessageDTO saved = contactMessageService.save(dto);
 
@@ -38,13 +39,15 @@ public class ContactMessageController {
         ));
     }
 
+    // GET: Hent alle beskeder (admin panel)
     @GetMapping("/messages")
     public ResponseEntity<List<ContactMessageDTO>> getAllMessages() {
-        log.info("GET /api/contact/messages - Fetch all messages");
+        log.info("GET /api/contact/messages");
         List<ContactMessageDTO> messages = contactMessageService.getAllMessages();
         return ResponseEntity.ok(messages);
     }
 
+    // GET: Hent ulæste beskeder
     @GetMapping("/messages/unread")
     public ResponseEntity<List<ContactMessageDTO>> getUnreadMessages() {
         log.info("GET /api/contact/messages/unread");
@@ -52,6 +55,7 @@ public class ContactMessageController {
         return ResponseEntity.ok(messages);
     }
 
+    // PATCH: Marker besked som læst
     @PatchMapping("/messages/{id}/read")
     public ResponseEntity<Void> markAsRead(@PathVariable Long id) {
         log.info("PATCH /api/contact/messages/{}/read", id);
@@ -59,13 +63,7 @@ public class ContactMessageController {
         return ResponseEntity.noContent().build();
     }
 
-    private String getClientIP(HttpServletRequest request) {
-        String xForwardedFor = request.getHeader("X-Forwarded-For");
-        if (xForwardedFor != null && !xForwardedFor.isEmpty()) {
-            return xForwardedFor.split(",")[0].trim();
-        }
-        return request.getRemoteAddr();
-    }
+    // DELETE: Slet besked
     @DeleteMapping("/messages/{id}")
     public ResponseEntity<Void> deleteMessage(@PathVariable Long id) {
         log.info("DELETE /api/contact/messages/{}", id);
