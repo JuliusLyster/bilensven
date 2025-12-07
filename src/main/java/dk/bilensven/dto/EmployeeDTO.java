@@ -10,8 +10,11 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @Data
+// Lombok: Auto-generate getters, setters, toString, equals, hashCode
 @NoArgsConstructor
+// Lombok: Default constructor (nødvendig for JSON deserialization)
 @AllArgsConstructor
+// Lombok: Constructor med alle felter (nyttigt til Entity → DTO conversion)
 public class EmployeeDTO {
     private Long id;
 

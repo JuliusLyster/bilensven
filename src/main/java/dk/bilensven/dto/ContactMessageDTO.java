@@ -10,9 +10,14 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @Data
+// Lombok: Auto-generate getters, setters, toString, equals, hashCode
 @NoArgsConstructor
+// Lombok: Default constructor (nødvendig for JSON deserialization)
 @AllArgsConstructor
+// Lombok: Constructor med alle felter (nyttigt til Entity → DTO conversion)
 public class ContactMessageDTO {
+
+    // ID (auto-genereret af database)
     private Long id;
 
     @NotBlank(message = "Navn er påkrævet")
@@ -31,5 +36,6 @@ public class ContactMessageDTO {
     private String message;
 
     private Boolean read;
+
     private LocalDateTime createdAt;
 }
