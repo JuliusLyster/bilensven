@@ -1,53 +1,38 @@
 package dk.bilensven.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.time.LocalDateTime;
-
+// JPA Entity for medarbejdere
 @Entity
 @Table(name = "employees")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@EntityListeners(AuditingEntityListener.class)
-public class Employee extends BaseEntity {
+public class Employee extends BaseEntity {  // Arver createdAt + updatedAt
+
+    // Primary key (auto-increment)
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "Navn er påkrævet")
-    @Size(max = 100, message = "Navnet skal være mindre end 100 tegn")
+    @Column(nullable = false, length = 100)
     private String name;
 
-    @NotBlank(message = "Stilling er påkrævet")
-    @Size(max = 100, message = "Stilling skal være mindre end 100 tegn")
+    @Column(nullable = false, length = 100)
     private String position;
 
-    @Email(message = "Ugyldigt e-mailformat")
-    @Column(unique = true)
+    @Column(unique = true, length = 255)
     private String email;
 
-    @Size(max = 20, message = "Telefonnummeret skal være på under 20 tegn")
+    @Column(length = 20)
     private String phone;
 
+    // Billede URL (optional)
     private String imageUrl;
 
     @Column(nullable = false)
-    private Boolean active = true;
-
-    @CreatedDate
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt;
-
-    @LastModifiedDate
-    private LocalDateTime updatedAt;
+    private boolean active = true;
 }

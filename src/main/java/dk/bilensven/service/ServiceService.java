@@ -28,7 +28,7 @@ public class ServiceService {
         log.info("Fetching all active services");
 
         return serviceRepository.findAll().stream()
-                .filter(Service::getActive)
+                .filter(Service::isActive)
                 .sorted(Comparator.comparing(Service::getName))
                 .map(this::toDTO)
                 .collect(Collectors.toList());
@@ -41,7 +41,7 @@ public class ServiceService {
         log.info("Fetching all active services sorted by price");
 
         return serviceRepository.findAll().stream()
-                .filter(Service::getActive)
+                .filter(Service::isActive)
                 .sorted((s1, s2) -> Double.compare(s1.getPrice(), s2.getPrice()))
                 .map(this::toDTO)
                 .collect(Collectors.toList());
@@ -54,7 +54,7 @@ public class ServiceService {
         log.info("Calculating total revenue from all active services");
 
         return serviceRepository.findAll().stream()
-                .filter(Service::getActive)
+                .filter(Service::isActive)
                 .mapToDouble(Service::getPrice)
                 .sum();
     }
@@ -66,7 +66,7 @@ public class ServiceService {
         log.info("Calculating average price of active services");
 
         return serviceRepository.findAll().stream()
-                .filter(Service::getActive)
+                .filter(Service::isActive)
                 .mapToDouble(Service::getPrice)
                 .average()
                 .orElse(0.0);
@@ -79,7 +79,7 @@ public class ServiceService {
         log.info("Finding services in price range {} - {}", minPrice, maxPrice);
 
         return serviceRepository.findAll().stream()
-                .filter(Service::getActive)
+                .filter(Service::isActive)
                 .filter(service -> service.getPrice() >= minPrice && service.getPrice() <= maxPrice)
                 .sorted(Comparator.comparing(Service::getPrice))
                 .map(this::toDTO)
@@ -163,7 +163,7 @@ public class ServiceService {
         dto.setName(service.getName());
         dto.setDescription(service.getDescription());
         dto.setPrice(service.getPrice());
-        dto.setActive(service.getActive());
+        dto.setActive(service.isActive());
         dto.setCreatedAt(service.getCreatedAt());
         dto.setUpdatedAt(service.getUpdatedAt());
         return dto;

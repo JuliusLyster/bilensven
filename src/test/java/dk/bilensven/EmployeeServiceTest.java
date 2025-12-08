@@ -55,7 +55,7 @@ class EmployeeServiceTest {
 
         // Then
         assertEquals(2, result.size());
-        assertTrue(result.stream().allMatch(EmployeeDTO::getActive));
+        assertTrue(result.stream().allMatch(EmployeeDTO::getActive));  // ← DTO: getActive() ✅
         verify(employeeRepository).findAll();
     }
 
@@ -119,7 +119,7 @@ class EmployeeServiceTest {
         // Then
         assertNotNull(result);
         assertEquals(1L, result.getId());
-        assertTrue(result.getActive());
+        assertTrue(result.getActive());  // ← DTO: getActive() ✅
         verify(employeeRepository).findByEmail(dto.getEmail());
         verify(employeeRepository).save(any(Employee.class));
     }
@@ -160,7 +160,7 @@ class EmployeeServiceTest {
         employeeService.delete(id);
 
         // Then
-        assertFalse(employee.getActive());
+        assertFalse(employee.isActive());
         verify(employeeRepository).findById(id);
         verify(employeeRepository).save(employee);
     }

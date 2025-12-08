@@ -28,7 +28,7 @@ public class EmployeeService {
         log.info("Fetching all active employees");
 
         return employeeRepository.findAll().stream()
-                .filter(Employee::getActive)  // Filter only active
+                .filter(Employee::isActive)  // Filter only active
                 .sorted(Comparator.comparing(Employee::getName))  // Sort by name
                 .map(this::toDTO)  // Transform to DTO
                 .collect(Collectors.toList());  // Collect to list
@@ -103,7 +103,7 @@ public class EmployeeService {
         dto.setEmail(employee.getEmail());
         dto.setPhone(employee.getPhone());
         dto.setImageUrl(employee.getImageUrl());
-        dto.setActive(employee.getActive());
+        dto.setActive(employee.isActive());
         dto.setCreatedAt(employee.getCreatedAt());
         dto.setUpdatedAt(employee.getUpdatedAt());
         return dto;
