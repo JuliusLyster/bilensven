@@ -38,4 +38,5 @@ public class ContactMessageDTO {
     private Boolean read;
 
     private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }
