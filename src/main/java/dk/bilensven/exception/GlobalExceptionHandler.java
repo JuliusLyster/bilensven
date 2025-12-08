@@ -11,15 +11,18 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.stream.Collectors;
 
+// Global exception handler for alle REST controllers
+// Fanger exceptions automatisk og returnerer strukturerede ErrorResponse
 @RestControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {
 
+    // Handler: Resource ikke fundet (404)
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleResourceNotFound(
             ResourceNotFoundException ex,
             HttpServletRequest request) {
-        log.error("Resource not found: {}", ex.getMessage());
+        log.warn("Resource not found: {}", ex.getMessage());
 
         ErrorResponse error = new ErrorResponse(
                 HttpStatus.NOT_FOUND.value(),
@@ -28,14 +31,15 @@ public class GlobalExceptionHandler {
                 request.getRequestURI()
         );
 
-        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
     }
 
+    // Handler: Manual validation fejl (400)
     @ExceptionHandler(ValidationException.class)
     public ResponseEntity<ErrorResponse> handleValidation(
             ValidationException ex,
             HttpServletRequest request) {
-        log.error("Validation error: {}", ex.getMessage());
+        log.warn("Validation error: {}", ex.getMessage());
 
         ErrorResponse error = new ErrorResponse(
                 HttpStatus.BAD_REQUEST.value(),
@@ -44,15 +48,18 @@ public class GlobalExceptionHandler {
                 request.getRequestURI()
         );
 
-        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
+    // Handler: @Valid annotation validation fejl (400)
+    // Samler alle field errors til én komma-separeret besked
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleMethodArgumentNotValid(
             MethodArgumentNotValidException ex,
             HttpServletRequest request) {
-        log.error("Bean validation error: {}", ex.getMessage());
+        log.warn("Bean validation error: {}", ex.getMessage());
 
+        // Format alle field errors: "field1: message1, field2: message2"
         String errorMessage = ex.getBindingResult()
                 .getFieldErrors()
                 .stream()
@@ -66,14 +73,15 @@ public class GlobalExceptionHandler {
                 request.getRequestURI()
         );
 
-        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
+    // Handler: Business logic fejl (409)
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<ErrorResponse> handleBusinessException(
             BusinessException ex,
             HttpServletRequest request) {
-        log.error("Business logic error: {}", ex.getMessage());
+        log.warn("Business logic error: {}", ex.getMessage());
 
         ErrorResponse error = new ErrorResponse(
                 HttpStatus.CONFLICT.value(),
@@ -82,21 +90,24 @@ public class GlobalExceptionHandler {
                 request.getRequestURI()
         );
 
-        return new ResponseEntity<>(error, HttpStatus.CONFLICT);
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
     }
 
+    // Handler: Catch-all for uventede fejl (500)
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGenericException(
             Exception ex,
             HttpServletRequest request) throws Exception {
 
-        // IMPORTANT: allow H2 console to work
+        // Tillad H2 console at fungere normalt (hvis brugt i development)
         if (request.getRequestURI().startsWith("/h2-console")) {
-            throw ex; // let Spring handle H2 console normally
+            throw ex;
         }
 
+        // Log full stack trace for debugging
         log.error("Unexpected error occurred", ex);
 
+        // Generic besked til frontend (security - skjul tekniske detaljer)
         ErrorResponse error = new ErrorResponse(
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),
                 "Internal Server Error",
@@ -104,6 +115,6 @@ public class GlobalExceptionHandler {
                 request.getRequestURI()
         );
 
-        return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }
 }
