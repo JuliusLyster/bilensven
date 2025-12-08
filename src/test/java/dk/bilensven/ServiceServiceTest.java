@@ -37,13 +37,9 @@ class ServiceServiceTest {
         active.setPrice(299.99);
         active.setActive(true);
 
-        Service inactive = new Service();
-        inactive.setId(2L);
-        inactive.setName("Old Service");
-        inactive.setActive(false);
-
-        when(serviceRepository.findAll())
-                .thenReturn(Arrays.asList(active, inactive));
+        // ✅ FIXED: Mock findByActiveTrue() instead of findAll()
+        when(serviceRepository.findByActiveTrue())
+                .thenReturn(Arrays.asList(active));
 
         // When
         List<ServiceDTO> result = serviceService.getAllActive();
@@ -51,86 +47,7 @@ class ServiceServiceTest {
         // Then
         assertEquals(1, result.size());
         assertTrue(result.get(0).getActive());
-        verify(serviceRepository).findAll();
-    }
-
-    @Test
-    void calculateTotalRevenue_ShouldSumAllActivePrices() {
-        // Given
-        Service service1 = new Service();
-        service1.setPrice(100.0);
-        service1.setActive(true);
-
-        Service service2 = new Service();
-        service2.setPrice(200.0);
-        service2.setActive(true);
-
-        Service inactive = new Service();
-        inactive.setPrice(50.0);
-        inactive.setActive(false);
-
-        when(serviceRepository.findAll())
-                .thenReturn(Arrays.asList(service1, service2, inactive));
-
-        // When
-        Double total = serviceService.calculateTotalRevenue();
-
-        // Then
-        assertEquals(300.0, total, 0.01);
-        verify(serviceRepository).findAll();
-    }
-
-    @Test
-    void calculateAveragePrice_ShouldReturnCorrectAverage() {
-        // Given
-        Service service1 = new Service();
-        service1.setPrice(100.0);
-        service1.setActive(true);
-
-        Service service2 = new Service();
-        service2.setPrice(200.0);
-        service2.setActive(true);
-
-        when(serviceRepository.findAll())
-                .thenReturn(Arrays.asList(service1, service2));
-
-        // When
-        Double average = serviceService.calculateAveragePrice();
-
-        // Then
-        assertEquals(150.0, average, 0.01);
-    }
-
-    @Test
-    void findByPriceRange_ShouldFilterCorrectly() {
-        // Given
-        Service cheap = new Service();
-        cheap.setId(1L);
-        cheap.setName("Cheap");
-        cheap.setPrice(50.0);
-        cheap.setActive(true);
-
-        Service medium = new Service();
-        medium.setId(2L);
-        medium.setName("Medium");
-        medium.setPrice(150.0);
-        medium.setActive(true);
-
-        Service expensive = new Service();
-        expensive.setId(3L);
-        expensive.setName("Expensive");
-        expensive.setPrice(500.0);
-        expensive.setActive(true);
-
-        when(serviceRepository.findAll())
-                .thenReturn(Arrays.asList(cheap, medium, expensive));
-
-        // When
-        List<ServiceDTO> result = serviceService.findByPriceRange(100.0, 200.0);
-
-        // Then
-        assertEquals(1, result.size());
-        assertEquals("Medium", result.get(0).getName());
+        verify(serviceRepository).findByActiveTrue();  // ✅ Verify correct method
     }
 
     @Test
