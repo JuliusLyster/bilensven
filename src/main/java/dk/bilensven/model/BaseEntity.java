@@ -11,16 +11,20 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
-    @MappedSuperclass
-    @EntityListeners(AuditingEntityListener.class)
-    @Getter
-    @Setter
-    public abstract class BaseEntity {
-        @CreatedDate
-        @Column(nullable = false, updatable = false)
-        private LocalDateTime createdAt;
+// Abstract base class for alle entities med fælles audit fields
+@MappedSuperclass
+// Spring Data JPA auditing listener (auto-set timestamps)
+@EntityListeners(AuditingEntityListener.class)
+@Getter
+@Setter
+public abstract class BaseEntity {
 
-        @LastModifiedDate
-        private LocalDateTime updatedAt;
-    }
+    // Timestamp: auto-set ved persist
+    @CreatedDate
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt;
 
+    // Timestamp: Hauto-set ved update, null hvis aldrig opdateret
+    @LastModifiedDate
+    private LocalDateTime updatedAt;
+}

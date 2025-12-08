@@ -1,38 +1,36 @@
 package dk.bilensven.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import lombok.Setter;
+import lombok.ToString;
 
-import java.time.LocalDateTime;
-
+// JPA Entity for admin login
 @Entity
 @Table(name = "users")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
-@AllArgsConstructor
-@EntityListeners(AuditingEntityListener.class)
-public class User {
+@ToString(exclude = "password")  // SECURITY: Exclude password from logs
+public class User extends BaseEntity {  // Arver createdAt + updatedAt
+
+    // Primary key (auto-increment)
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "Brugernavn er påkrævet")
-    @Column(unique = true, nullable = false)
+    @Column(nullable = false, unique = true, length = 50)
     private String username;
 
-    @NotBlank(message = "Adgangskode er påkrævet")
-    @Column(nullable = false)
-    private String password; // BCrypt hashed
+    // Adgangskode (BCrypt hashed, 60 characters)
+    @JsonIgnore  // SECURITY: Never serialize password in JSON responses
+    @Column(nullable = false, length = 60)
+    private String password;
 
-    @Column(nullable = false)
-    private String role = "ADMIN";
-
-    @CreatedDate
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt;
+    // Brugerrolle (ADMIN eller USER)
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    private Role role = Role.ADMIN;
 }
