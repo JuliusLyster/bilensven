@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+// Service layer for medarbejder business logic
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -21,19 +22,19 @@ public class EmployeeService {
 
     private final EmployeeRepository employeeRepository;
 
-    /**
-     * FUNCTIONAL PROGRAMMING: Stream operations with filter, map, collect
-     */
+    // Hent alle aktive medarbejdere (sorteret alfabetisk)
+    // FUNCTIONAL PROGRAMMING: Stream operations with database filter
     public List<EmployeeDTO> getAllActive() {
         log.info("Fetching all active employees");
 
-        return employeeRepository.findAll().stream()
-                .filter(Employee::isActive)  // Filter only active
-                .sorted(Comparator.comparing(Employee::getName))  // Sort by name
-                .map(this::toDTO)  // Transform to DTO
-                .collect(Collectors.toList());  // Collect to list
+        return employeeRepository.findByActiveTrue().stream()
+                .sorted(Comparator.comparing(Employee::getName))
+                .map(this::toDTO)  // Entity → DTO transformation
+                .collect(Collectors.toList());
     }
 
+    // Hent specifik medarbejder ved ID
+    // FUNCTIONAL PROGRAMMING: Optional for null safety
     public EmployeeDTO getById(Long id) {
         log.info("Fetching employee with id: {}", id);
 
@@ -43,30 +44,37 @@ public class EmployeeService {
         return toDTO(employee);
     }
 
-    /**
-     * FUNCTIONAL PROGRAMMING: Optional for null safety
-     */
+    // Opret ny medarbejder
+    // Business rule: Email skal være unique
     public EmployeeDTO create(EmployeeDTO dto) {
         log.info("Creating new employee: {}", dto.getName());
 
-        // Check if email already exists
         Optional<Employee> existing = employeeRepository.findByEmail(dto.getEmail());
         if (existing.isPresent()) {
             throw new BusinessException("Employee with email " + dto.getEmail() + " already exists");
         }
 
         Employee employee = toEntity(dto);
-        employee.setActive(true);
+        employee.setActive(true);  // Nye medarbejdere starter som aktive
 
         Employee saved = employeeRepository.save(employee);
         return toDTO(saved);
     }
 
+    // Opdater eksisterende medarbejder
     public EmployeeDTO update(Long id, EmployeeDTO dto) {
         log.info("Updating employee with id: {}", id);
 
         Employee employee = employeeRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Employee", id));
+
+        // Check email uniqueness hvis email ændres
+        if (!employee.getEmail().equals(dto.getEmail())) {
+            Optional<Employee> existing = employeeRepository.findByEmail(dto.getEmail());
+            if (existing.isPresent()) {
+                throw new BusinessException("Email " + dto.getEmail() + " is already in use");
+            }
+        }
 
         // Update fields
         employee.setName(dto.getName());
@@ -79,9 +87,8 @@ public class EmployeeService {
         return toDTO(updated);
     }
 
-    /**
-     * Soft delete - mark as inactive
-     */
+    // Slet medarbejder (soft delete - mark as inactive)
+    // Data bevares for historik og audit trail
     public void delete(Long id) {
         log.info("Deleting (soft) employee with id: {}", id);
 
@@ -92,9 +99,7 @@ public class EmployeeService {
         employeeRepository.save(employee);
     }
 
-    /**
-     * FUNCTIONAL PROGRAMMING: Method reference in mapping
-     */
+    // Konverter Entity → DTO (for API responses)
     private EmployeeDTO toDTO(Employee employee) {
         EmployeeDTO dto = new EmployeeDTO();
         dto.setId(employee.getId());
@@ -109,6 +114,7 @@ public class EmployeeService {
         return dto;
     }
 
+    // Konverter DTO → Entity (for database persistence)
     private Employee toEntity(EmployeeDTO dto) {
         Employee employee = new Employee();
         employee.setName(dto.getName());
