@@ -37,26 +37,22 @@ class EmployeeServiceTest {
         active1.setName("John Doe");
         active1.setActive(true);
 
-        Employee inactive = new Employee();
-        inactive.setId(2L);
-        inactive.setName("Jane Inactive");
-        inactive.setActive(false);
-
         Employee active2 = new Employee();
         active2.setId(3L);
         active2.setName("Alice Active");
         active2.setActive(true);
 
-        when(employeeRepository.findAll())
-                .thenReturn(Arrays.asList(active1, inactive, active2));
+        // ✅ FIXED: Mock findByActiveTrue() instead of findAll()
+        when(employeeRepository.findByActiveTrue())
+                .thenReturn(Arrays.asList(active1, active2));
 
         // When
         List<EmployeeDTO> result = employeeService.getAllActive();
 
         // Then
         assertEquals(2, result.size());
-        assertTrue(result.stream().allMatch(EmployeeDTO::getActive));  // ← DTO: getActive() ✅
-        verify(employeeRepository).findAll();
+        assertTrue(result.stream().allMatch(EmployeeDTO::getActive));
+        verify(employeeRepository).findByActiveTrue();  // ✅ Verify correct method
     }
 
     @Test
@@ -119,7 +115,7 @@ class EmployeeServiceTest {
         // Then
         assertNotNull(result);
         assertEquals(1L, result.getId());
-        assertTrue(result.getActive());  // ← DTO: getActive() ✅
+        assertTrue(result.getActive());
         verify(employeeRepository).findByEmail(dto.getEmail());
         verify(employeeRepository).save(any(Employee.class));
     }
@@ -160,7 +156,7 @@ class EmployeeServiceTest {
         employeeService.delete(id);
 
         // Then
-        assertFalse(employee.isActive());
+        assertFalse(employee.isActive());  // ✅ Correct: isActive() for entity
         verify(employeeRepository).findById(id);
         verify(employeeRepository).save(employee);
     }
