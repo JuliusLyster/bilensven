@@ -10,13 +10,15 @@ const API_BASE_URL = 'http://localhost:8080/api';
 
 async function loadDashboard() {
     try {
-        const [services, employees] = await Promise.all([
+        const [services, employees, messages] = await Promise.all([
             fetch(`${API_BASE_URL}/services`).then(r => r.json()),
-            fetch(`${API_BASE_URL}/employees`).then(r => r.json())
+            fetch(`${API_BASE_URL}/employees`).then(r => r.json()),
+            fetch(`${API_BASE_URL}/contact/messages`).then(r => r.json())
         ]);
 
         document.getElementById('services-count').textContent = services.length;
         document.getElementById('employees-count').textContent = employees.length;
+        document.getElementById('messages-count').textContent = messages.length;
 
     } catch (error) {
         console.error('Error loading dashboard:', error);
@@ -291,6 +293,163 @@ async function deleteEmployee(id) {
 }
 
 // ============================================
+// CONTACT MESSAGES MANAGEMENT
+// ============================================
+
+let messagesData = [];
+
+async function loadContactMessages() {
+    try {
+        const loadingEl = document.getElementById('messages-loading');
+        const tableEl = document.getElementById('messages-table');
+
+        if (loadingEl) loadingEl.style.display = 'block';
+        if (tableEl) tableEl.style.display = 'none';
+
+        const response = await fetch(`${API_BASE_URL}/contact/messages`);
+        messagesData = await response.json();
+
+        if (loadingEl) loadingEl.style.display = 'none';
+        if (tableEl) tableEl.style.display = 'table';
+
+        renderMessagesTable();
+        updateUnreadBadge();
+    } catch (error) {
+        console.error('Error loading messages:', error);
+        const loadingEl = document.getElementById('messages-loading');
+        if (loadingEl) loadingEl.style.display = 'none';
+        showAlert('Kunne ikke hente beskeder', 'error');
+    }
+}
+
+function renderMessagesTable() {
+    const tbody = document.querySelector('#messages-table tbody');
+    if (!tbody) return;
+
+    tbody.innerHTML = messagesData.map(msg => `
+        <tr style="${!msg.read ? 'background: #eff6ff; font-weight: 600;' : ''}">
+            <td>${msg.id}</td>
+            <td>${escapeHtml(msg.name)}</td>
+            <td>${escapeHtml(msg.email)}</td>
+            <td>${escapeHtml(msg.phone || '-')}</td>
+            <td style="max-width: 300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                ${escapeHtml(msg.message)}
+            </td>
+            <td>${formatDate(msg.createdAt)}</td>
+            <td>
+                <span class="badge ${msg.read ? 'badge-success' : 'badge-danger'}">
+                    ${msg.read ? 'Læst' : 'Ulæst'}
+                </span>
+            </td>
+            <td>
+                <button class="btn-sm btn-primary" onclick="viewMessage(${msg.id})">Se</button>
+                ${!msg.read ? `<button class="btn-sm btn-secondary" onclick="markMessageAsRead(${msg.id})">Marker Læst</button>` : ''}
+                <button class="btn-sm btn-danger" onclick="deleteMessage(${msg.id})">Slet</button>
+            </td>
+        </tr>
+    `).join('');
+}
+
+function updateUnreadBadge() {
+    const unreadCount = messagesData.filter(m => !m.read).length;
+    const badge = document.getElementById('unread-badge');
+
+    if (unreadCount > 0 && badge) {
+        badge.textContent = `${unreadCount} ulæst${unreadCount > 1 ? 'e' : ''}`;
+        badge.style.display = 'inline-block';
+    } else if (badge) {
+        badge.style.display = 'none';
+    }
+}
+
+function viewMessage(id) {
+    const message = messagesData.find(m => m.id === id);
+    if (!message) return;
+
+    const detailsEl = document.getElementById('message-details');
+    detailsEl.innerHTML = `
+        <div style="line-height: 1.8;">
+            <p><strong>Fra:</strong> ${escapeHtml(message.name)}</p>
+            <p><strong>Email:</strong> ${escapeHtml(message.email)}</p>
+            <p><strong>Telefon:</strong> ${escapeHtml(message.phone || '-')}</p>
+            <p><strong>Dato:</strong> ${formatDate(message.createdAt)}</p>
+            <p><strong>Status:</strong> 
+                <span class="badge ${message.read ? 'badge-success' : 'badge-danger'}">
+                    ${message.read ? 'Læst' : 'Ulæst'}
+                </span>
+            </p>
+            <hr style="margin: 1.5rem 0;">
+            <p><strong>Besked:</strong></p>
+            <p style="padding: 1rem; background: #f9fafb; border-radius: 8px; white-space: pre-wrap;">
+                ${escapeHtml(message.message)}
+            </p>
+            <div style="margin-top: 1.5rem; display: flex; gap: 1rem;">
+                ${!message.read ?
+        `<button class="btn btn-primary" onclick="markMessageAsRead(${id}); closeMessageModal();">Marker som Læst</button>` :
+        ''
+    }
+                <button class="btn btn-danger" onclick="deleteMessage(${id}); closeMessageModal();">Slet Besked</button>
+                <button class="btn btn-secondary" onclick="closeMessageModal()">Luk</button>
+            </div>
+        </div>
+    `;
+
+    document.getElementById('message-modal').style.display = 'block';
+}
+
+function closeMessageModal() {
+    document.getElementById('message-modal').style.display = 'none';
+}
+
+async function markMessageAsRead(id) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/contact/messages/${id}/read`, {
+            method: 'PATCH'
+        });
+
+        if (!response.ok) throw new Error('Failed to mark as read');
+
+        showAlert('Besked markeret som læst', 'success');
+        await loadContactMessages();
+        await loadDashboard();
+    } catch (error) {
+        console.error('Error marking message as read:', error);
+        showAlert('Kunne ikke markere besked som læst', 'error');
+    }
+}
+
+async function deleteMessage(id) {
+    if (!confirm('Er du sikker på at du vil slette denne besked?')) return;
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/contact/messages/${id}`, {
+            method: 'DELETE'
+        });
+
+        if (!response.ok) throw new Error('Failed to delete message');
+
+        showAlert('Besked slettet', 'success');
+        await loadContactMessages();
+        await loadDashboard();
+    } catch (error) {
+        console.error('Error deleting message:', error);
+        showAlert('Kunne ikke slette besked', 'error');
+    }
+}
+
+function formatDate(dateString) {
+    if (!dateString) return '-';
+    const date = new Date(dateString);
+    return date.toLocaleString('da-DK', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+}
+
+// ============================================
 // UTILITY FUNCTIONS
 // ============================================
 
@@ -350,6 +509,7 @@ document.addEventListener('DOMContentLoaded', function() {
     loadDashboard();
     loadServices();
     loadEmployees();
+    loadContactMessages();
 
     console.log('Admin panel initialized!');
 });
@@ -358,11 +518,15 @@ document.addEventListener('DOMContentLoaded', function() {
 window.onclick = function(event) {
     const serviceModal = document.getElementById('service-modal');
     const employeeModal = document.getElementById('employee-modal');
+    const messageModal = document.getElementById('message-modal');
 
     if (event.target == serviceModal) {
         serviceModal.style.display = 'none';
     }
     if (event.target == employeeModal) {
         employeeModal.style.display = 'none';
+    }
+    if (event.target == messageModal) {
+        messageModal.style.display = 'none';
     }
 }
