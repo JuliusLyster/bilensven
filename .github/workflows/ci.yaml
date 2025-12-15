@@ -24,7 +24,6 @@ jobs:
         with:
           java-version: '24'
           distribution: 'temurin'
-          cache: 'maven'
 
       # 3. Cache Maven dependencies
       - name: Cache Maven dependencies
