@@ -48,7 +48,8 @@ public class ContactMessageService {
         log.info("Fetching unread contact messages");
 
         return contactMessageRepository.findByReadFalse().stream()
-                .sorted(Comparator.comparing(ContactMessage::getCreatedAt).reversed())
+                .sorted(Comparator.comparing(ContactMessage::getCreatedAt,
+                        Comparator.nullsLast(Comparator.naturalOrder())).reversed())
                 .map(this::toDTO)
                 .collect(Collectors.toList());
     }
