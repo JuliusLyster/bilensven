@@ -7,10 +7,10 @@ services:
       - "8080:8080"
     environment:
       - SPRING_PROFILES_ACTIVE=prod
-      - DB_HOST=mysql
-      - DB_NAME=bilensven
-      - DB_USER=bilensven_user
-      - DB_PASSWORD=secure_password_123
+      - DB_HOST=${DB_HOST}
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
     depends_on:
       mysql:
         condition: service_healthy
@@ -22,10 +22,10 @@ services:
     container_name: bilensven-mysql
     restart: unless-stopped
     environment:
-      - MYSQL_DATABASE=bilensven
-      - MYSQL_USER=bilensven_user
-      - MYSQL_PASSWORD=secure_password_123
-      - MYSQL_ROOT_PASSWORD=root_password_123
+      - MYSQL_DATABASE=${DB_NAME}
+      - MYSQL_USER=${DB_USER}
+      - MYSQL_PASSWORD=${DB_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
     volumes:
       - mysql-data:/var/lib/mysql
     ports:

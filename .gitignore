@@ -1,4 +1,9 @@
-<<<<<<< HEAD
+# Environment variables (SECURITY - DO NOT COMMIT!)
+.env
+*.env
+!.env.example
+
+# Spring Boot
 HELP.md
 target/
 .mvn/wrapper/maven-wrapper.jar
@@ -32,7 +37,7 @@ build/
 
 ### VS Code ###
 .vscode/
-=======
+
 # Compiled class file
 *.class
 
@@ -54,7 +59,6 @@ build/
 *.tar.gz
 *.rar
 
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+# virtual machine crash logs
 hs_err_pid*
 replay_pid*
->>>>>>> 0c725b550599d726685e202dd6f686fd4116b2f8
